@@ -11,9 +11,9 @@ public class ColorPersistance{
      * Saves a new color.
      *
      * @param color the new color
-     * @throws GridMasterException if an error occurs during saving
+     * @throws ColorSaveException if an error occurs during saving
      */
-    public void saveColor(String color) throws GridMasterException{
+    public void saveColor(String color) throws ColorSaveException{
         colors.put(color, false);
     }
 
@@ -32,9 +32,9 @@ public class ColorPersistance{
      * Deletes a color.
      *
      * @param color the color that will be deleted
-     * @throws GridMasterException if an error occurs during deletion
+     * @throws ColorNotFoundException if an error occurs during deletion
      */
-    public void deleteColor(String color) throws GridMasterException{
+    public void deleteColor(String color) throws ColorNotFoundException{
         colors.remove(color);
     }
 }
