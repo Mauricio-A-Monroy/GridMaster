@@ -1,0 +1,71 @@
+/* Aplica la fuente Jacquard 12 y establece estilos generales */
+body {
+    font-family: 'Jacquard 12', monospace;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    margin: 0;
+    background-color: #f4f4f4;
+}
+
+/* Estilo del título principal */
+h1 {
+    font-size: 128px;
+    color: #5A6C72;
+    text-align: center;
+    margin-bottom: 50px;
+    font-weight: 599;
+}
+
+/* Sección del input */
+.input-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Estilo del input */
+input[type="text"] {
+    font-family: 'Jacquard 12', monospace; /* Fuente para el input */
+    font-size: 18px;
+    padding: 10px;
+    margin-bottom: 20px;
+    width: 300px;
+    text-align: center;
+}
+
+/* Sección de unirse a un juego */
+.join-a-game {
+    display: flex;
+    flex-direction: column; /* Coloca los elementos en columna */
+    align-items: center; /* Centra horizontalmente */
+}
+
+/* Estilo del contenedor de join */
+.join-container {
+    display: flex;
+    flex-direction: column; /* Coloca los elementos en columna */
+    align-items: center; /* Centra horizontalmente */
+    margin: 10px 0; /* Añade margen superior e inferior */
+}
+
+/* Estilo de los botones */
+button {
+    font-family: 'Jacquard 12', monospace; /* Fuente para los botones */
+    font-size: 20px;
+    padding: 10px 20px;
+    margin: 10px 0;
+    cursor: pointer;
+    width: 200px;
+}
+
+#gameIdInput {
+    font-family: 'Jacquard 12', monospace; /* Usar la misma fuente */
+    font-size: 18px;
+    padding: 10px;
+    margin-top: 10px; /* Añadir margen para separar del botón */
+    width: 300px;
+    text-align: center;
+}

@@ -1,4 +1,4 @@
-package gridmaster.persistance;
+package edu.co.arsw.gridmaster.persistance;
 
 public class ColorNotFoundException extends Exception{
 

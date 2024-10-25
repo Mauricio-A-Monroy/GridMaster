@@ -1,4 +1,4 @@
-package gridmaster.persistance;
+package edu.co.arsw.gridmaster.persistance;
 
 import java.util.List;
 import java.util.Set;
