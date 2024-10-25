@@ -20,7 +20,7 @@ public class GameController {
         return new ResponseEntity<>(gameService.getAllGames(), HttpStatus.ACCEPTED);
     }
 
-    @RequestMapping(value = "code", method = RequestMethod.GET)
+    @RequestMapping(value = "{code}", method = RequestMethod.GET)
     public ResponseEntity<?> getGameByCode(@PathVariable Integer code){
         try {
             return new ResponseEntity<>(gameService.getGameByCode(code), HttpStatus.ACCEPTED);
@@ -29,10 +29,10 @@ public class GameController {
         }
     }
 
-    @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<?> createGame(@RequestBody Game game){
+    @RequestMapping(value = "{userName}", method = RequestMethod.POST)
+    public ResponseEntity<?> createGame(@PathVariable String userName){
         try {
-            gameService.createGame(game);
+            gameService.createGame(userName);
         } catch (GridMasterException e) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }

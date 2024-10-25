@@ -1,5 +1,6 @@
 package edu.co.arsw.gridmaster.service;
 
+import edu.co.arsw.gridmaster.model.User;
 import edu.co.arsw.gridmaster.model.exceptions.GridMasterException;
 import edu.co.arsw.gridmaster.persistance.GamePersistence;
 import edu.co.arsw.gridmaster.model.Game;
@@ -15,9 +16,12 @@ public class GameService {
     GamePersistence gamePersistence;
 
     // Returns game?
-    public Game createGame(Game game) throws GridMasterException {
-        gamePersistence.saveGame(game);
-        return gamePersistence.getGameByCode(game.getCode());
+    public void createGame(String userName) throws GridMasterException {
+        Game newGame = new Game();
+        User admin = new User(userName);
+        // Obtain the color to associate it with the admin
+        newGame.addUser(admin);
+        gamePersistence.saveGame(newGame);
     }
 
     public void deleteGame(Integer code) throws GridMasterException {
@@ -38,6 +42,14 @@ public class GameService {
 
     public Game getGameByCode(Integer code) throws GridMasterException {
         return gamePersistence.getGameByCode(code);
+    }
+
+    public void addUser(Integer code, String userName) throws GridMasterException {
+        Game game = gamePersistence.getGameByCode(code);
+        User newUser = new User(userName);
+        // Obtain the color
+        game.addUser(newUser);
+        gamePersistence.addUser(new User(userName));
     }
 
 }

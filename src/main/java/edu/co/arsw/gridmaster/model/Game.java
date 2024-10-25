@@ -1,5 +1,7 @@
 package edu.co.arsw.gridmaster.model;
 
+import edu.co.arsw.gridmaster.persistance.Tuple;
+
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -12,13 +14,13 @@ public class Game {
     private ArrayList<User> users;
     private Board board;
 
-    public Game(Integer code, Integer time, Integer maxPlayers, ConcurrentHashMap<User, Integer> scores, ArrayList<User> users, Board board) {
-        this.code = code;
-        this.time = time;
-        this.maxPlayers = maxPlayers;
-        this.scores = scores;
-        this.users = users;
-        this.board = board;
+    public Game() {
+        this.code = (int) ((Math.random() * (9999 - 1000) + 1000));
+        this.time = 600;
+        this.maxPlayers = 4;
+        this.scores = new ConcurrentHashMap<>();
+        this.users = new ArrayList<>();
+        this.board = new Board(new Tuple<>(100, 100));
     }
 
     public Integer getCode() {
@@ -81,5 +83,9 @@ public class Game {
                 ", maxPlayers=" + maxPlayers +
                 ", users=" + users +
                 '}';
+    }
+
+    public void addUser(User user){
+        users.add(user);
     }
 }

@@ -1,6 +1,5 @@
 package edu.co.arsw.gridmaster.controller;
 
-import edu.co.arsw.gridmaster.model.User;
 import edu.co.arsw.gridmaster.model.exceptions.GridMasterException;
 import edu.co.arsw.gridmaster.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,9 +29,9 @@ public class UserController {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<?> createUser(@RequestBody User user){
+    public ResponseEntity<?> createUser(@RequestBody String userName){
         try {
-            userService.createUser(user);
+            userService.createUser(userName);
         } catch (GridMasterException e) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }

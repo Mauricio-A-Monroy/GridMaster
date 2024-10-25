@@ -8,13 +8,15 @@ public class Box {
     private int[] color;
     private User owner;
     private Tuple<Integer, Integer> position;
-    private Board board;
 
-    public Box(int[] color, User owner, Tuple position, Board board) {
+    public Box(Tuple<Integer, Integer> position){
+        this.position = position;
+    }
+
+    public Box(int[] color, User owner, Tuple position) {
         this.color = color;
         this.owner = owner;
         this.position = position;
-        this.board = board;
     }
 
     public int[] getColor() {

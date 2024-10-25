@@ -1,5 +1,6 @@
 package edu.co.arsw.gridmaster.service;
 
+import edu.co.arsw.gridmaster.model.Box;
 import edu.co.arsw.gridmaster.model.User;
 import edu.co.arsw.gridmaster.model.exceptions.GridMasterException;
 import edu.co.arsw.gridmaster.persistance.Tuple;
@@ -19,9 +20,8 @@ public class UserService {
         // void method for the moment
     }
 
-    public User createUser(User user) throws GridMasterException {
-        userPersistence.saveUser(user);
-        return userPersistence.getUserByName(user.getUserName());
+    public void createUser(String userName) throws GridMasterException {
+        userPersistence.saveUser(new User(userName));
     }
 
     public void deleteUser(String name) throws GridMasterException {

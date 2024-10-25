@@ -11,13 +11,10 @@ public class User {
     private int[] color;
     private AtomicInteger score;
     private Tuple<Integer, Integer> position;
-    private Game game;
 
-    public User(String userName, int[] color, Game game) {
+    public User(String userName){
         Random rand = new Random();
         this.userName = userName;
-        this.color = color;
-        this.game = game;
         this.score = new AtomicInteger(0);
         this.position = new Tuple<>(rand.nextInt(100), rand.nextInt(100));
     }
@@ -52,14 +49,6 @@ public class User {
 
     public void setPosition(Tuple<Integer, Integer> position) {
         this.position = position;
-    }
-
-    public Game getGame() {
-        return game;
-    }
-
-    public void setGame(Game game) {
-        this.game = game;
     }
 
     @Override
