@@ -1,12 +1,11 @@
-package gridmaster.persistance;
+package edu.co.arsw.gridmaster.persistance;
 
-import java.util.List;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import edu.co.arsw.gridmaster.model.exceptions.*;
 
-public interface ColorPersistance{
+public class ColorPersistance{
 
-    //private ConcurrentHashMap<String, Boolean> colors = new ConcurrentHashMap<>();
+    private ConcurrentHashMap<String, Boolean> colors = new ConcurrentHashMap<>();
 
     /**
      * Saves a new color.
@@ -14,7 +13,9 @@ public interface ColorPersistance{
      * @param color the new color
      * @throws GridMasterException if an error occurs during saving
      */
-    public void saveColor(String color) throws GridMasterException;
+    public void saveColor(String color) throws GridMasterException{
+        colors.put(color, false);
+    }
 
     /**
      * Checks if the color already exists.
@@ -23,7 +24,9 @@ public interface ColorPersistance{
      * @return true if the color already exists, false otherwise
      * @throws GridMasterException if an error occurs during checking
      */
-    public boolean colorAlreadyExist(String color) throws GridMasterException;
+    public boolean colorAlreadyExist(String color) throws GridMasterException{
+      return colors.containsKey(color);
+    }
 
     /**
      * Deletes a color.
@@ -31,5 +34,7 @@ public interface ColorPersistance{
      * @param color the color that will be deleted
      * @throws GridMasterException if an error occurs during deletion
      */
-    public void deleteColor(String color) throws GridMasterException;
+    public void deleteColor(String color) throws GridMasterException{
+        colors.remove(color);
+    }
 }
