@@ -28,6 +28,8 @@ public class UserController {
         }
     }
 
+    // POST Methods
+
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<?> createUser(@RequestBody String userName){
         try {

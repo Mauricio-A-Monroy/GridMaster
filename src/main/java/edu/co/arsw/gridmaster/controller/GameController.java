@@ -1,6 +1,6 @@
 package edu.co.arsw.gridmaster.controller;
 
-import edu.co.arsw.gridmaster.model.Game;
+import edu.co.arsw.gridmaster.model.User;
 import edu.co.arsw.gridmaster.model.exceptions.GridMasterException;
 import edu.co.arsw.gridmaster.service.GameService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +34,7 @@ public class GameController {
     // POST Requests
 
     @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<?> createGame(){
+    public ResponseEntity<?> createGame() {
         try {
             return new ResponseEntity<>(gameService.createGame(), HttpStatus.CREATED);
         } catch (GridMasterException e) {
@@ -42,18 +42,18 @@ public class GameController {
         }
     }
 
-    @RequestMapping(value = "{code}/{userName}", method = RequestMethod.POST)
+    // PUT REQUESTS
+
+    @RequestMapping(value = "{code}/users", method = RequestMethod.PUT)
     public ResponseEntity<?> addUser(@PathVariable Integer code,
-                                     @PathVariable String userName){
+                                     @RequestBody User newUser){
         try {
-            gameService.addUser(code, userName);
+            gameService.addUser(code, newUser);
         } catch (GridMasterException e) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return new ResponseEntity<>(HttpStatus.ACCEPTED);
     }
-
-    // PUT REQUESTS
 
     // DELETE Requests
 

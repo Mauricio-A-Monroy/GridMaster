@@ -16,7 +16,6 @@ public class User {
         Random rand = new Random();
         this.userName = userName;
         this.score = new AtomicInteger(0);
-        this.position = new Tuple<>(rand.nextInt(100), rand.nextInt(100));
     }
 
     public String getUserName() {

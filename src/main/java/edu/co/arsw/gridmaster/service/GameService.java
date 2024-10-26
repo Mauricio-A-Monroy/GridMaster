@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class GameService {
@@ -28,7 +29,7 @@ public class GameService {
     }
 
     public void startGame(){
-        // void method for the moment
+
     }
 
     public void endGame(){
@@ -43,12 +44,16 @@ public class GameService {
         return gamePersistence.getGameByCode(code);
     }
 
-    public void addUser(Integer code, String userName) throws GridMasterException {
+    public void addUser(Integer code, User user) throws GridMasterException {
         Game game = gamePersistence.getGameByCode(code);
-        User newUser = new User(userName);
         // Obtain the color
-        game.addUser(newUser);
+        game.addUser(user);
         gamePersistence.saveGame(game);
+    }
+
+    public ConcurrentHashMap<String, Integer> getScores(Integer code) throws GridMasterException {
+        Game game = gamePersistence.getGameByCode(code);
+        return game.getScores();
     }
 
 }
