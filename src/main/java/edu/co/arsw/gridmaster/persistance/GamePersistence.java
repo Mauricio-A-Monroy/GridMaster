@@ -1,7 +1,6 @@
 package edu.co.arsw.gridmaster.persistance;
 
 import edu.co.arsw.gridmaster.model.Game;
-import edu.co.arsw.gridmaster.model.User;
 import edu.co.arsw.gridmaster.model.exceptions.GridMasterException;
 import org.springframework.stereotype.Service;
 
@@ -13,12 +12,9 @@ import java.util.concurrent.ConcurrentHashMap;
 public class GamePersistence {
 
     private ConcurrentHashMap<Integer, Game> games;
-    // private ColorPersistance colors;
-    private UserPersistence users;
 
     public GamePersistence(){
         this.games = new ConcurrentHashMap<>();
-        this.users = new UserPersistence();
     }
 
     public void saveGame(Game game) throws GridMasterException {
@@ -35,11 +31,6 @@ public class GamePersistence {
 
     public Set<Game> getAllGames(){
         return new HashSet<>(games.values());
-    }
-
-    public void addUser(User user) throws GridMasterException {
-        users.saveUser(user);
-        System.out.println(users);
     }
 
 }

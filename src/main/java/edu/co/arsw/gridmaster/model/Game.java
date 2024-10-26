@@ -4,13 +4,14 @@ import edu.co.arsw.gridmaster.persistance.Tuple;
 
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Game {
 
     private Integer code;
     private Integer time;
     private Integer maxPlayers;
-    private ConcurrentHashMap<User, Integer> scores;
+    private ConcurrentHashMap<String, Integer> scores;
     private ArrayList<User> users;
     private Board board;
 
@@ -47,11 +48,11 @@ public class Game {
         this.maxPlayers = newMaxPlayers;
     }
 
-    public ConcurrentHashMap<User, Integer> getScores() {
+    public ConcurrentHashMap<String, Integer> getScores() {
         return scores;
     }
 
-    public void setScores(ConcurrentHashMap<User, Integer> scores) {
+    public void setScores(ConcurrentHashMap<String, Integer> scores) {
         this.scores = scores;
     }
 
@@ -87,5 +88,6 @@ public class Game {
 
     public void addUser(User user){
         users.add(user);
+        scores.put(user.getUserName(), user.getScore().get());
     }
 }

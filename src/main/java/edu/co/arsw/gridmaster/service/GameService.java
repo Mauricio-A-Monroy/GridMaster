@@ -16,12 +16,11 @@ public class GameService {
     GamePersistence gamePersistence;
 
     // Returns game?
-    public void createGame(String userName) throws GridMasterException {
+    public Integer createGame() throws GridMasterException {
         Game newGame = new Game();
-        User admin = new User(userName);
-        // Obtain the color to associate it with the admin
-        newGame.addUser(admin);
+        Integer code = newGame.getCode();
         gamePersistence.saveGame(newGame);
+        return code;
     }
 
     public void deleteGame(Integer code) throws GridMasterException {
@@ -49,7 +48,7 @@ public class GameService {
         User newUser = new User(userName);
         // Obtain the color
         game.addUser(newUser);
-        gamePersistence.addUser(new User(userName));
+        gamePersistence.saveGame(game);
     }
 
 }

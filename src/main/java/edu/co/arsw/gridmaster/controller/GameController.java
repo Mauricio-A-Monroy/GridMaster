@@ -15,6 +15,8 @@ public class GameController {
     @Autowired
     GameService gameService;
 
+    // GET Requests
+
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<?> getAllGames(){
         return new ResponseEntity<>(gameService.getAllGames(), HttpStatus.ACCEPTED);
@@ -29,15 +31,31 @@ public class GameController {
         }
     }
 
-    @RequestMapping(value = "{userName}", method = RequestMethod.POST)
-    public ResponseEntity<?> createGame(@PathVariable String userName){
+    // POST Requests
+
+    @RequestMapping(method = RequestMethod.POST)
+    public ResponseEntity<?> createGame(){
         try {
-            gameService.createGame(userName);
+            return new ResponseEntity<>(gameService.createGame(), HttpStatus.CREATED);
+        } catch (GridMasterException e) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+    }
+
+    @RequestMapping(value = "{code}/{userName}", method = RequestMethod.POST)
+    public ResponseEntity<?> addUser(@PathVariable Integer code,
+                                     @PathVariable String userName){
+        try {
+            gameService.addUser(code, userName);
         } catch (GridMasterException e) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
+
+    // PUT REQUESTS
+
+    // DELETE Requests
 
     @RequestMapping(value = "{code}", method = RequestMethod.DELETE)
     public ResponseEntity<?> deleteGame(@PathVariable Integer code){
