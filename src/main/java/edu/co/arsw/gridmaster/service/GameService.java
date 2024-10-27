@@ -1,5 +1,6 @@
 package edu.co.arsw.gridmaster.service;
 
+import edu.co.arsw.gridmaster.model.Board;
 import edu.co.arsw.gridmaster.model.User;
 import edu.co.arsw.gridmaster.model.exceptions.GridMasterException;
 import edu.co.arsw.gridmaster.persistance.GamePersistence;
@@ -7,6 +8,9 @@ import edu.co.arsw.gridmaster.model.Game;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -16,7 +20,9 @@ public class GameService {
     @Autowired
     GamePersistence gamePersistence;
 
-    // Returns game?
+    @Autowired
+    UserService userService;
+
     public Integer createGame() throws GridMasterException {
         Game newGame = new Game();
         Integer code = newGame.getCode();
@@ -28,12 +34,30 @@ public class GameService {
         gamePersistence.deleteGame(code);
     }
 
-    public void startGame(){
-
+    public void startGame(Integer code) throws GridMasterException {
+        Game game = gamePersistence.getGameByCode(code);
+        setPositions(game);
     }
 
-    public void endGame(){
-        // void method for the moment
+    public void updateGame(Integer code, Integer time, HashMap<String, Integer> score, Board board) throws GridMasterException {
+        Game game = gamePersistence.getGameByCode(code);
+        game.setTime(time);
+        ConcurrentHashMap<String, Integer> scores = new ConcurrentHashMap<>(score);
+        game.setScores(scores);
+        game.setBoard(board);
+        gamePersistence.saveGame(game);
+    }
+
+    public HashMap<String, Integer> getScoreBoard(Integer code) throws GridMasterException {
+        Game game = gamePersistence.getGameByCode(code);
+        ConcurrentHashMap<String, Integer> scores = game.getScores();
+        HashMap<String, Integer> newScores = new HashMap<>();
+        ArrayList<String> sortedKeys = new ArrayList<>(scores.keySet());
+        Collections.sort(sortedKeys);
+        for(String x : sortedKeys){
+            newScores.put(x, scores.get(x));
+        }
+        return newScores;
     }
 
     public Set<Game> getAllGames(){
@@ -44,16 +68,16 @@ public class GameService {
         return gamePersistence.getGameByCode(code);
     }
 
-    public void addUser(Integer code, User user) throws GridMasterException {
+    public synchronized void addUser(Integer code, String userName) throws GridMasterException {
         Game game = gamePersistence.getGameByCode(code);
-        // Obtain the color
+        User user = userService.getUserByName(userName);
+        // user.setColor(game.obtainColor());
         game.addUser(user);
         gamePersistence.saveGame(game);
     }
 
-    public ConcurrentHashMap<String, Integer> getScores(Integer code) throws GridMasterException {
-        Game game = gamePersistence.getGameByCode(code);
-        return game.getScores();
+    public void setPositions(Game game) throws GridMasterException {
+        userService.setPositions(game.getUsers());
     }
 
 }

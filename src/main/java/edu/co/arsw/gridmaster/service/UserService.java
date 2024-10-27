@@ -8,6 +8,7 @@ import edu.co.arsw.gridmaster.persistance.UserPersistence;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Set;
 
 @Service
@@ -38,6 +39,22 @@ public class UserService {
 
     public User getUserByName(String name) throws GridMasterException {
         return userPersistence.getUserByName(name);
+    }
+
+    public void setPositions(ArrayList<User> users) throws GridMasterException {
+        ArrayList<int[]> positions = new ArrayList<>();
+        positions.add(new int[]{0, 0});
+        int[] position;
+        for(User i : users){
+            i.setPosition();
+            position = i.getPosition();
+            while(positions.contains(position)) {
+                i.setPosition();
+                position = i.getPosition();
+            }
+            positions.add(position);
+            userPersistence.saveUser(i);
+        }
     }
 
 }

@@ -56,10 +56,6 @@ public class Game {
         this.scores = scores;
     }
 
-    public void setUserScore(User user) {
-        scores.get(user);
-    }
-
     public ArrayList<User> getUsers() {
         return users;
     }

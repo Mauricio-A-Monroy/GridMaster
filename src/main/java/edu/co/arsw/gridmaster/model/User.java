@@ -1,5 +1,7 @@
 package edu.co.arsw.gridmaster.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import edu.co.arsw.gridmaster.persistance.Tuple;
 
 import java.util.Random;
@@ -12,10 +14,12 @@ public class User {
     private AtomicInteger score;
     private Tuple<Integer, Integer> position;
 
-    public User(String userName){
-        Random rand = new Random();
+    @JsonCreator
+    public User(@JsonProperty("userName") String userName){
         this.userName = userName;
         this.score = new AtomicInteger(0);
+        this.color = new int[]{0, 0, 0};
+        this.position = new Tuple<>(0, 0);
     }
 
     public String getUserName() {
@@ -42,19 +46,22 @@ public class User {
         this.score = score;
     }
 
-    public Tuple<Integer, Integer> getPosition() {
-        return position;
+    public int[] getPosition() {
+        return new int[]{this.position.getFirst(), this.position.getSecond()};
     }
 
-    public void setPosition(Tuple<Integer, Integer> position) {
-        this.position = position;
+    public void setPosition() {
+        Random rand = new Random();
+        this.position = new Tuple<>(rand.nextInt(100), rand.nextInt(100));
+        System.out.println(this.position.getFirst());
+        System.out.println(this.position.getSecond());
     }
 
     @Override
     public String toString() {
         return "User{" +
                 "userName='" + userName + '\'' +
-                ", position=" + position +
+                ", position=" + position.getFirst() + " " + position.getSecond() +
                 '}';
     }
 }
