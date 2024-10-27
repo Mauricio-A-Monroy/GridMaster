@@ -2,6 +2,7 @@ package edu.co.arsw.gridmaster.controller;
 
 import edu.co.arsw.gridmaster.model.User;
 import edu.co.arsw.gridmaster.model.exceptions.GridMasterException;
+import edu.co.arsw.gridmaster.persistance.Tuple;
 import edu.co.arsw.gridmaster.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,6 +15,8 @@ public class UserController {
 
     @Autowired
     UserService userService;
+
+    // GET Methods
 
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<?> getAllUsers(){
@@ -34,12 +37,27 @@ public class UserController {
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<?> createUser(@RequestBody User user){
         try {
-            userService.createUser(user.getUserName());
+            userService.createUser(user);
         } catch (GridMasterException e) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
+
+    // PUT Methods
+
+    @RequestMapping(value = "{userName}", method = RequestMethod.PUT)
+    public ResponseEntity<?> moveUser(@PathVariable String userName,
+                                      @RequestBody Tuple<Integer, Integer> newPosition){
+        try {
+            userService.move(userName, newPosition);
+        } catch (GridMasterException e) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+        return new ResponseEntity<>(HttpStatus.ACCEPTED);
+    }
+
+    // DELETE Methods
 
     @RequestMapping(value = "{userName}", method = RequestMethod.DELETE)
     public ResponseEntity<?> deleteUser(@PathVariable String userName){

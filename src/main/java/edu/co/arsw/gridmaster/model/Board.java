@@ -36,6 +36,10 @@ public class Board {
         this.boxes = boxes;
     }
 
+    public Box getBox(Tuple<Integer, Integer> position){
+        return boxes.get(position.getFirst()).get(position.getSecond());
+    }
+
     @Override
     public String toString() {
         return "Board{" +

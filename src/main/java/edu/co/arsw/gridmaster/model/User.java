@@ -13,13 +13,16 @@ public class User {
     private int[] color;
     private AtomicInteger score;
     private Tuple<Integer, Integer> position;
+    private Integer gameCode;
 
     @JsonCreator
-    public User(@JsonProperty("userName") String userName){
+    public User(@JsonProperty("userName") String userName,
+                @JsonProperty("gameCode") Integer gameCode){
         this.userName = userName;
         this.score = new AtomicInteger(0);
         this.color = new int[]{0, 0, 0};
         this.position = new Tuple<>(0, 0);
+        this.gameCode = gameCode;
     }
 
     public String getUserName() {
@@ -50,11 +53,21 @@ public class User {
         return new int[]{this.position.getFirst(), this.position.getSecond()};
     }
 
-    public void setPosition() {
+    public void setPosition(Tuple<Integer, Integer> position) {
+        this.position = position;
+    }
+
+    public void generatePosition() {
         Random rand = new Random();
         this.position = new Tuple<>(rand.nextInt(100), rand.nextInt(100));
-        System.out.println(this.position.getFirst());
-        System.out.println(this.position.getSecond());
+    }
+
+    public Integer getGameCode() {
+        return gameCode;
+    }
+
+    public void setGameCode(Integer gameCode) {
+        this.gameCode = gameCode;
     }
 
     @Override
