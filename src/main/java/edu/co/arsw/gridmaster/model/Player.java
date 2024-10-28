@@ -7,30 +7,27 @@ import edu.co.arsw.gridmaster.persistance.Tuple;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class User {
+public class Player {
 
-    private String userName;
+    private String name;
     private int[] color;
     private AtomicInteger score;
     private Tuple<Integer, Integer> position;
-    private Integer gameCode;
 
     @JsonCreator
-    public User(@JsonProperty("userName") String userName,
-                @JsonProperty("gameCode") Integer gameCode){
-        this.userName = userName;
+    public Player(@JsonProperty("name") String name){
+        this.name = name;
         this.score = new AtomicInteger(0);
         this.color = new int[]{0, 0, 0};
         this.position = new Tuple<>(0, 0);
-        this.gameCode = gameCode;
     }
 
-    public String getUserName() {
-        return userName;
+    public String getName() {
+        return name;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public int[] getColor() {
@@ -62,18 +59,10 @@ public class User {
         this.position = new Tuple<>(rand.nextInt(100), rand.nextInt(100));
     }
 
-    public Integer getGameCode() {
-        return gameCode;
-    }
-
-    public void setGameCode(Integer gameCode) {
-        this.gameCode = gameCode;
-    }
-
     @Override
     public String toString() {
-        return "User{" +
-                "userName='" + userName + '\'' +
+        return "Player{" +
+                "name='" + name + '\'' +
                 ", position=" + position.getFirst() + " " + position.getSecond() +
                 '}';
     }

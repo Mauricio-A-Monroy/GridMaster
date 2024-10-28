@@ -2,11 +2,10 @@ package edu.co.arsw.gridmaster.model;
 
 import edu.co.arsw.gridmaster.persistance.Tuple;
 
-
 public class Box {
 
     private int[] color;
-    private User owner;
+    private Player owner;
     private Tuple<Integer, Integer> position;
     private boolean isBusy;
 
@@ -17,7 +16,7 @@ public class Box {
         this.color = new int[]{0, 0, 0};
     }
 
-    public Box(int[] color, User owner, Tuple<Integer, Integer> position) {
+    public Box(int[] color, Player owner, Tuple<Integer, Integer> position) {
         this.color = color;
         this.owner = owner;
         this.position = position;
@@ -31,11 +30,11 @@ public class Box {
         this.color = color;
     }
 
-    public User getOwner() {
+    public Player getOwner() {
         return owner;
     }
 
-    public void setOwner(User owner) {
+    public void setOwner(Player owner) {
         this.owner = owner;
     }
 

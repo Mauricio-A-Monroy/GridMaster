@@ -1,5 +1,8 @@
 package edu.co.arsw.gridmaster.persistance;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.Objects;
 
 public class Tuple<T1, T2> {
@@ -7,7 +10,9 @@ public class Tuple<T1, T2> {
     T1 o1;
     T2 o2;
 
-    public Tuple(T1 o1, T2 o2) {
+    @JsonCreator
+    public Tuple(@JsonProperty("o1") T1 o1,
+                 @JsonProperty("o2") T2 o2) {
         super();
         this.o1 = o1;
         this.o2 = o2;
