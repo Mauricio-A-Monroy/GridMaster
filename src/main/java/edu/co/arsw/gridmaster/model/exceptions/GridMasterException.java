@@ -12,8 +12,4 @@ public class GridMasterException extends Exception {
     public GridMasterException(String message, Throwable cause) {
         super(message, cause);
     }
-
-    public GridMasterException(Throwable cause) {
-        super(cause);
-    }
 }
