@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import edu.co.arsw.gridmaster.persistance.Tuple;
 
+import java.util.Objects;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -65,6 +66,10 @@ public class Player {
     public void generatePosition(Integer x, Integer y) {
         Random rand = new Random();
         this.position = new Tuple<>(rand.nextInt(x), rand.nextInt(y));
+    }
+
+    public boolean isLocatedAt(Integer x, Integer y){
+        return (Objects.equals(this.position.getFirst(), x) && Objects.equals(this.position.getSecond(), y));
     }
 
     @Override

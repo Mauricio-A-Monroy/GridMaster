@@ -1,6 +1,8 @@
 package edu.co.arsw.gridmaster.persistance;
 
 import edu.co.arsw.gridmaster.model.GridMaster;
+import edu.co.arsw.gridmaster.model.exceptions.GameNotFoundException;
+import edu.co.arsw.gridmaster.model.exceptions.GameSaveException;
 import edu.co.arsw.gridmaster.model.exceptions.GridMasterException;
 import org.springframework.stereotype.Service;
 
@@ -18,10 +20,16 @@ public class GridMasterPersistence {
     }
 
     public GridMaster getGameByCode(Integer code) throws GridMasterException{
+        if(!games.containsKey(code)){
+            throw new GameNotFoundException();
+        }
         return games.get(code);
     }
 
     public void deleteGame(Integer code) throws GridMasterException{
+        if(!games.containsKey(code)){
+            throw new GameNotFoundException();
+        }
         games.remove(code);
     }
 

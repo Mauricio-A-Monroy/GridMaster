@@ -3,7 +3,7 @@ package edu.co.arsw.gridmaster.service;
 import edu.co.arsw.gridmaster.model.Box;
 import edu.co.arsw.gridmaster.model.GridMaster;
 import edu.co.arsw.gridmaster.model.Player;
-import edu.co.arsw.gridmaster.model.exceptions.GridMasterException;
+import edu.co.arsw.gridmaster.model.exceptions.*;
 import edu.co.arsw.gridmaster.persistance.GridMasterPersistence;
 import edu.co.arsw.gridmaster.persistance.Tuple;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +36,11 @@ public class GridMasterService {
 
     public Player getPlayerByName(Integer code, String name) throws GridMasterException {
         GridMaster game = gridMasterPersistence.getGameByCode(code);
-        return game.getPlayerByName(name);
+        Player player = game.getPlayerByName(name);
+        if(player == null){
+            throw new PlayerNotFoundException();
+        }
+        return player;
     }
 
     public HashMap<String, Integer> getScoreBoard(Integer code) throws GridMasterException {
@@ -64,32 +68,43 @@ public class GridMasterService {
 
     public void setPositions(GridMaster game) throws GridMasterException {
         ArrayList<int[]> positions = new ArrayList<>();
-        positions.add(new int[]{0, 0});
         int[] position;
         for(Player i : game.getPlayers().values()){
-            i.generatePosition(game.getDimension().getFirst(), game.getDimension().getSecond());
-            position = i.getPosition();
-            while(positions.contains(position)) {
+            do {
                 i.generatePosition(game.getDimension().getFirst(), game.getDimension().getSecond());
                 position = i.getPosition();
-            }
+            } while (positions.contains(position));
             positions.add(position);
+            game.getBox(new Tuple<>(position[0], position[1])).setBusy(true);
         }
         gridMasterPersistence.saveGame(game);
     }
 
     public synchronized void addPlayer(Integer code, String name) throws GridMasterException {
         GridMaster game = gridMasterPersistence.getGameByCode(code);
-        // user.setColor(game.obtainColor());
-        game.addPlayer(new Player(name));
+        if(game.getMaxPlayers() == game.getPlayers().size()){
+            throw new GameException("Room is full.");
+        }
+        if(game.getPlayerByName(name) != null){
+            throw new PlayerSaveException();
+        }
+        Player player = new Player(name);
+        player.setColor(game.obtainColor());
+        game.addPlayer(player);
         gridMasterPersistence.saveGame(game);
     }
 
     public void move(Integer code, String playerName, Tuple<Integer, Integer> newPosition) throws GridMasterException {
         GridMaster game = gridMasterPersistence.getGameByCode(code);
+        Integer x = newPosition.getFirst();
+        Integer y = newPosition.getSecond();
+        if(x < 0 || y < 0 || x >= game.getDimension().getFirst() || y >= game.getDimension().getSecond()){
+            throw new BoardException("Invalid move.");
+        }
         Player player = game.getPlayerByName(playerName);
         Tuple<Integer, Integer> oldPosition = new Tuple<>(player.getPosition()[0], player.getPosition()[1]);
         changeScore(game, player, game.getBox(newPosition), game.getBox(oldPosition));
+        game.printBoard();
         gridMasterPersistence.saveGame(game);
     }
 

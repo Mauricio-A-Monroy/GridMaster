@@ -15,6 +15,7 @@ public class GridMaster {
     private HashMap<String, Player> players;
     private Tuple<Integer, Integer> dimension;
     private ArrayList<ArrayList<Box>> boxes;
+    private Color color;
 
     public GridMaster() {
         this.code = (int) ((Math.random() * (9999 - 1000) + 1000));
@@ -22,7 +23,8 @@ public class GridMaster {
         this.maxPlayers = 4;
         this.scores = new ConcurrentHashMap<>();
         this.players = new HashMap<>();
-        this.dimension = new Tuple<>(5, 5);
+        this.dimension = new Tuple<>(3, 3);
+        this.color = new Color();
         this.boxes = new ArrayList<>();
         for(int i = 0; i < dimension.getFirst(); i++){
             boxes.add(new ArrayList<>());
@@ -100,6 +102,10 @@ public class GridMaster {
         scores.put(name, score);
     }
 
+    public int[] obtainColor(){
+        return color.getColor();
+    }
+
     @Override
     public String toString() {
         return "Game{" +
@@ -108,6 +114,25 @@ public class GridMaster {
                 ", maxPlayers=" + maxPlayers +
                 ", players=" + players +
                 '}';
+    }
+
+    public void printBoard(){
+        boolean bool = false;
+        for(int i = 0; i < dimension.getFirst(); i++){
+            for(int j = 0; j < dimension.getSecond(); j++){
+                for(Player player : players.values()){
+                    if(player.isLocatedAt(i, j)){
+                        System.out.print(player.getName() + "           ");
+                        bool = true;
+                    }
+                }
+                if(!bool){
+                    System.out.print(boxes.get(i).get(j).getOwner() + "             ");
+                }
+                bool = false;
+            }
+            System.out.println();
+        }
     }
 
     public void addPlayer(Player player){

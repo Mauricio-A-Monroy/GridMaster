@@ -9,8 +9,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-
 @RestController
 @RequestMapping(value = "/games")
 public class GridMasterController {
@@ -85,7 +83,7 @@ public class GridMasterController {
         return new ResponseEntity<>(HttpStatus.ACCEPTED);
     }
 
-    @RequestMapping(value = "{code}/players", method = RequestMethod.PUT)
+    @RequestMapping(value = "{code}/player", method = RequestMethod.PUT)
     public ResponseEntity<?> addPlayer(@PathVariable Integer code,
                                      @RequestBody Player player){
         try {
@@ -96,7 +94,7 @@ public class GridMasterController {
         return new ResponseEntity<>(HttpStatus.ACCEPTED);
     }
 
-    @RequestMapping(value = "{code}/{name}", method = RequestMethod.PUT)
+    @RequestMapping(value = "{code}/player/{name}", method = RequestMethod.PUT)
     public ResponseEntity<?> movePlayer(@PathVariable Integer code,
                                         @PathVariable String name,
                                         @RequestBody Tuple<Integer, Integer> newPosition){

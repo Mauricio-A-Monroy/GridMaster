@@ -33,6 +33,9 @@ public class Color{
     }
 
     public int[] getColor() throws NoMoreColorsException {
+        if(colors.isEmpty()){
+            throw new NoMoreColorsException();
+        }
         return colors.poll();
     }
 }
