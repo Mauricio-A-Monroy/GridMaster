@@ -46,6 +46,14 @@ public class Player {
         this.score = score;
     }
 
+    public void incrementScore(){
+        this.score.incrementAndGet();
+    }
+
+    public void decrementScore(){
+        this.score.decrementAndGet();
+    }
+
     public int[] getPosition() {
         return new int[]{this.position.getFirst(), this.position.getSecond()};
     }
@@ -54,9 +62,9 @@ public class Player {
         this.position = position;
     }
 
-    public void generatePosition() {
+    public void generatePosition(Integer x, Integer y) {
         Random rand = new Random();
-        this.position = new Tuple<>(rand.nextInt(100), rand.nextInt(100));
+        this.position = new Tuple<>(rand.nextInt(x), rand.nextInt(y));
     }
 
     @Override

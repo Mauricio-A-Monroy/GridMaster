@@ -14,7 +14,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 public class GridMasterService {
@@ -54,7 +53,6 @@ public class GridMasterService {
 
     public Integer createGridMaster() throws GridMasterException {
         GridMaster newGame = new GridMaster();
-        Integer code = newGame.getCode();
         gridMasterPersistence.saveGame(newGame);
         return newGame.getCode();
     }
@@ -69,23 +67,14 @@ public class GridMasterService {
         positions.add(new int[]{0, 0});
         int[] position;
         for(Player i : game.getPlayers().values()){
-            i.generatePosition();
+            i.generatePosition(game.getDimension().getFirst(), game.getDimension().getSecond());
             position = i.getPosition();
             while(positions.contains(position)) {
-                i.generatePosition();
+                i.generatePosition(game.getDimension().getFirst(), game.getDimension().getSecond());
                 position = i.getPosition();
             }
             positions.add(position);
         }
-        gridMasterPersistence.saveGame(game);
-    }
-
-    // Check
-    public void updateGame(Integer code, Integer time, HashMap<String, Integer> score) throws GridMasterException {
-        GridMaster game = gridMasterPersistence.getGameByCode(code);
-        game.setTime(time);
-        ConcurrentHashMap<String, Integer> scores = new ConcurrentHashMap<>(score);
-        game.setScores(scores);
         gridMasterPersistence.saveGame(game);
     }
 
@@ -100,17 +89,17 @@ public class GridMasterService {
         GridMaster game = gridMasterPersistence.getGameByCode(code);
         Player player = game.getPlayerByName(playerName);
         Tuple<Integer, Integer> oldPosition = new Tuple<>(player.getPosition()[0], player.getPosition()[1]);
-        changeScore(player, game.getBox(newPosition), game.getBox(oldPosition));
+        changeScore(game, player, game.getBox(newPosition), game.getBox(oldPosition));
         gridMasterPersistence.saveGame(game);
     }
 
-    public synchronized void changeScore(Player player, Box newBox, Box oldBox){
+    public synchronized void changeScore(GridMaster game, Player player, Box newBox, Box oldBox){
         // The box is free and nobody is standing there
         if(!newBox.isBusy()){
             player.setPosition(newBox.getPosition());
 
-            int score = player.getScore().getAndIncrement();
-            player.setScore(new AtomicInteger(score));
+            player.incrementScore();
+            game.updateScoreOfPlayer(player.getName(), player.getScore().get());
 
             oldBox.setBusy(false);
             oldBox.setOwner(player);
@@ -120,8 +109,8 @@ public class GridMasterService {
             // Decrementing opponent score
             if(newBox.getOwner() != null){
                 Player opponent = newBox.getOwner();
-                int opponentScore = opponent.getScore().getAndDecrement();
-                opponent.setScore(new AtomicInteger(opponentScore));
+                opponent.decrementScore();
+                game.updateScoreOfPlayer(opponent.getName(), opponent.getScore().get());
             }
         }
     }

@@ -22,7 +22,7 @@ public class GridMaster {
         this.maxPlayers = 4;
         this.scores = new ConcurrentHashMap<>();
         this.players = new HashMap<>();
-        this.dimension = new Tuple<>(100, 100);
+        this.dimension = new Tuple<>(5, 5);
         this.boxes = new ArrayList<>();
         for(int i = 0; i < dimension.getFirst(); i++){
             boxes.add(new ArrayList<>());
@@ -96,7 +96,9 @@ public class GridMaster {
         this.dimension = dimension;
     }
 
-
+    public void updateScoreOfPlayer(String name, Integer score){
+        scores.put(name, score);
+    }
 
     @Override
     public String toString() {

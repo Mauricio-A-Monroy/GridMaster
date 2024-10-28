@@ -75,18 +75,6 @@ public class GridMasterController {
 
     // PUT REQUESTS
 
-    @RequestMapping(value = "{code}", method = RequestMethod.PUT)
-    public ResponseEntity<?> updateGame(@PathVariable Integer code,
-                                        @RequestBody Integer time,
-                                        @RequestBody HashMap<String, Integer> score){
-        try {
-            gridMasterService.updateGame(code, time, score);
-        } catch (GridMasterException e) {
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-        }
-        return new ResponseEntity<>(HttpStatus.ACCEPTED);
-    }
-
     @RequestMapping(value = "{code}/start", method = RequestMethod.PUT)
     public ResponseEntity<?> startGame(@PathVariable Integer code){
         try {
