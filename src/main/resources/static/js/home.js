@@ -1,22 +1,11 @@
-class Game {
-    constructor() {
-        // Elementos del DOM
-        this.joinButton = document.getElementById('join');
-        this.gameIdInput = document.getElementById('gameIdInput');
+var game = (function(){
+    const createBt = document.getElementById('creat');
+    const joinBt = document.getElementById('join');
 
-        // Inicializar eventos
-        this.initEvents();
+    if (createBt){
+        createBt.addEventListener('click', function() {
+            window.location.href = "game.html";
+        });
     }
 
-    initEvents() {
-        // Agregar el evento de clic al botón de unirse
-        this.joinButton.addEventListener('click', () => this.showGameIdInput());
-    }
-
-    showGameIdInput() {
-        this.gameIdInput.style.display = 'block'; // Cambia a 'block' para mostrar el input
-    }
-}
-
-// Instanciar la clase Game cuando se cargue la página
-const app = new Game();
+})();
