@@ -1,14 +1,15 @@
 var game = (function() {
     const board = document.getElementById('board');
-    const rows = 10;
-    const columns = 10;
-    const cellSize = 100;
-    let playerRow = 2; 
-    let playerColumn = 3; 
+    const rows = 50;
+    const columns = 50;
+    const cellSize = 10;
+    let playerRow = 25; 
+    let playerColumn = 30; 
     const playerColor = "#FFA500";
     const grid = Array.from({ length: rows }, () => Array(columns).fill(null));
 
     var loadBoard = function() {
+        console.log("rows: ", rows, " columns: ",columns)
         board.style.setProperty('--rows', rows);
         board.style.setProperty('--columns', columns);
 
