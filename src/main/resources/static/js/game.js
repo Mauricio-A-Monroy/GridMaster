@@ -5,16 +5,16 @@ var game = (function() {
     const cellSize = 10;
     let playerRow = 25; 
     let playerColumn = 30; 
-    const playerColor = "#FFA500";
+    var playerColor = "#FFA500";
     const grid = Array.from({ length: rows }, () => Array(columns).fill(null));
 
     var setPlayerColor = function(gameCode, playerName) {
-        api.getPlayer(gameCode, playerName).then(function(player) {
-            // Convertir RGB a hexadecimal
+        return api.getPlayer(gameCode, playerName).then(function(player) {
             const rgb = player.color; // [255, 0, 0]
             const hexColor = rgbToHex(rgb[0], rgb[1], rgb[2]);
             playerColor = hexColor;
             console.log("Player color in hex:", playerColor);
+            return playerColor;
         });
     };
     
@@ -26,6 +26,8 @@ var game = (function() {
         console.log("rows: ", rows, " columns: ",columns)
         board.style.setProperty('--rows', rows);
         board.style.setProperty('--columns', columns);
+        console.log("PlayerColor: ", playerColor);
+        board.style.setProperty('--playarColor', playerColor);
 
         for (let i = 0; i < rows; i++) {
             for (let j = 0; j < columns; j++) {
@@ -37,8 +39,6 @@ var game = (function() {
 
                 
                 if (i === playerRow && j === playerColumn) {
-                    console.log("PlayerColor: ", playerColor);
-                    board.style.setProperty('--playarColor', playerColor);
                     const hexagon = document.createElement('div');
                     hexagon.classList.add('hexagon');
                     cell.appendChild(hexagon);
@@ -115,5 +115,14 @@ var game = (function() {
 })();
 
 document.addEventListener('DOMContentLoaded', function() {
-    game.loadBoard();
+    const gameCode = localStorage.getItem('gameCode');
+    const playerName = localStorage.getItem('playerName');
+
+    if (gameCode && playerName) {
+        game.setPlayerColor(gameCode, playerName).then(() => {
+            game.loadBoard();
+        });
+    } else {
+        console.error("Game code or player name is missing.");
+    }
 });

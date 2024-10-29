@@ -2,6 +2,7 @@ api=(function(){
     
     //Gets
     var getPlayer = function(gameCode, playerName) {
+        console.log("gameCode: ", gameCode, " playerName: ", playerName);
         return $.ajax({
             url: 'http://localhost:8080/games/' + gameCode + '/players/' + playerName,
             type: 'GET',
@@ -22,8 +23,7 @@ api=(function(){
             contentType: "application/json"
         }).then(function(gameCode) {
             localStorage.setItem('gameCode', gameCode);
-            return addPlayer(gameCode, playerName);
-            
+            return gameCode;
         }).catch(function(error) {
             console.error("Error creating game:", error);
         });
@@ -37,7 +37,7 @@ api=(function(){
             data: JSON.stringify({ name: playerName }),
             contentType: "application/json"
         }).then(function(response) {
-            console.log("Player added:", response);
+            console.log("Player added");
             return response;
         }).catch(function(error) {
             console.error("Error adding player:", error);
