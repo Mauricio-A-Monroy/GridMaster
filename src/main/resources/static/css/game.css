@@ -1,0 +1,59 @@
+/* Estilo general del cuerpo */
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    margin: 0;
+    background-color: #f4f4f4;
+    font-family: Arial, sans-serif;
+}
+
+:root {
+    --rows: 5; /* Valor por defecto */
+    --columns: 5; /* Valor por defecto */
+}
+
+.board {
+    display: grid;
+    grid-template-columns: repeat(var(--columns), 100px);
+    grid-template-rows: repeat(var(--rows), 100px);
+    gap: 2px;
+}
+
+.cell {
+    background-color: #ddd;
+    border: 1px solid #999;
+    cursor: pointer;
+    position: relative; /* Necesario para el posicionamiento absoluto del hexágono */
+}
+
+/* Estilos para el hexágono */
+.hexagon {
+    width: 90px; /* Ajusta el tamaño según tus necesidades */
+    height: 90px;
+    background-color: #FFA500; /* Color del hexágono */
+    position: absolute; /* Cambia a absoluto */
+    left: 50%; /* Posiciona al centro horizontalmente */
+    top: 50%; /* Posiciona al centro verticalmente */
+    transform: translate(-50%, -50%); /* Centra el hexágono */
+    clip-path: polygon(
+        50% 0%,
+        100% 25%,
+        100% 75%,
+        50% 100%,
+        0% 75%,
+        0% 25%
+    );
+    border: 5px solid #000; /* Borde negro */
+    box-sizing: border-box; /* Asegura que el borde no afecte el tamaño total */
+    background-color: #FFA500; /* Color del hexágono */
+    z-index: 1; /* Asegura que el hexágono esté por encima del fondo */
+}
+
+
+
+
+
+
