@@ -15,6 +15,9 @@ public class Player {
     private AtomicInteger score;
     private Tuple<Integer, Integer> position;
 
+    public Player(){
+    }
+
     @JsonCreator
     public Player(@JsonProperty("name") String name){
         this.name = name;

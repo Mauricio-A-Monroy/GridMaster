@@ -4,38 +4,47 @@ import edu.co.arsw.gridmaster.model.Box;
 import edu.co.arsw.gridmaster.model.GridMaster;
 import edu.co.arsw.gridmaster.model.Player;
 import edu.co.arsw.gridmaster.model.exceptions.*;
-import edu.co.arsw.gridmaster.persistance.GridMasterPersistence;
+import edu.co.arsw.gridmaster.persistance.GridMasterRepository;
 import edu.co.arsw.gridmaster.persistance.Tuple;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class GridMasterService {
 
     @Autowired
-    GridMasterPersistence gridMasterPersistence;
+    GridMasterRepository gridMasterRepository;
 
-    public Set<GridMaster> getAllGames(){
-        return gridMasterPersistence.getAllGames();
+    public List<GridMaster> getAllGames(){
+        return gridMasterRepository.findAll();
     }
 
-    public GridMaster getGameByCode(Integer code) throws GridMasterException {
-        return gridMasterPersistence.getGameByCode(code);
+    public Optional<GridMaster> getGameByCode(Integer code) throws GridMasterException {
+        return gridMasterRepository.findById(code);
     }
 
     public ArrayList<Player> getPlayers(Integer code) throws GridMasterException {
-        GridMaster game = gridMasterPersistence.getGameByCode(code);
-        return new ArrayList<>(game.getPlayers().values());
+        GridMaster game;
+        if(gridMasterRepository.findById(code).isPresent()){
+            game = gridMasterRepository.findById(code).get();
+            return new ArrayList<>(game.getPlayers().values());
+        }
+        else{
+            throw new GameNotFoundException();
+        }
     }
 
     public Player getPlayerByName(Integer code, String name) throws GridMasterException {
-        GridMaster game = gridMasterPersistence.getGameByCode(code);
+        GridMaster game;
+        if(gridMasterRepository.findById(code).isPresent()){
+            game = gridMasterRepository.findById(code).get();
+        }
+        else{
+            throw new GameNotFoundException();
+        }
         Player player = game.getPlayerByName(name);
         if(player == null){
             throw new PlayerNotFoundException();
@@ -44,7 +53,13 @@ public class GridMasterService {
     }
 
     public HashMap<String, Integer> getScoreBoard(Integer code) throws GridMasterException {
-        GridMaster game = gridMasterPersistence.getGameByCode(code);
+        GridMaster game;
+        if(gridMasterRepository.findById(code).isPresent()){
+            game = gridMasterRepository.findById(code).get();
+        }
+        else{
+            throw new GameNotFoundException();
+        }
         ConcurrentHashMap<String, Integer> scores = game.getScores();
         HashMap<String, Integer> newScores = new HashMap<>();
         ArrayList<String> sortedKeys = new ArrayList<>(scores.keySet());
@@ -57,12 +72,18 @@ public class GridMasterService {
 
     public Integer createGridMaster() throws GridMasterException {
         GridMaster newGame = new GridMaster();
-        gridMasterPersistence.saveGame(newGame);
+        gridMasterRepository.save(newGame);
         return newGame.getCode();
     }
 
     public void startGame(Integer code) throws GridMasterException {
-        GridMaster game = gridMasterPersistence.getGameByCode(code);
+        GridMaster game;
+        if(gridMasterRepository.findById(code).isPresent()){
+            game = gridMasterRepository.findById(code).get();
+        }
+        else{
+            throw new GameNotFoundException();
+        }
         setPositions(game);
     }
 
@@ -77,11 +98,17 @@ public class GridMasterService {
             positions.add(position);
             game.getBox(new Tuple<>(position[0], position[1])).setBusy(true);
         }
-        gridMasterPersistence.saveGame(game);
+        gridMasterRepository.save(game);
     }
 
     public synchronized void addPlayer(Integer code, String name) throws GridMasterException {
-        GridMaster game = gridMasterPersistence.getGameByCode(code);
+        GridMaster game;
+        if(gridMasterRepository.findById(code).isPresent()){
+            game = gridMasterRepository.findById(code).get();
+        }
+        else{
+            throw new GameNotFoundException();
+        }
         if(game.getMaxPlayers() == game.getPlayers().size()){
             throw new GameException("Room is full.");
         }
@@ -91,11 +118,17 @@ public class GridMasterService {
         Player player = new Player(name);
         player.setColor(game.obtainColor());
         game.addPlayer(player);
-        gridMasterPersistence.saveGame(game);
+        gridMasterRepository.save(game);
     }
 
     public void move(Integer code, String playerName, Tuple<Integer, Integer> newPosition) throws GridMasterException {
-        GridMaster game = gridMasterPersistence.getGameByCode(code);
+        GridMaster game;
+        if(gridMasterRepository.findById(code).isPresent()){
+            game = gridMasterRepository.findById(code).get();
+        }
+        else{
+            throw new GameNotFoundException();
+        }
         Integer x = newPosition.getFirst();
         Integer y = newPosition.getSecond();
         if(x < 0 || y < 0 || x >= game.getDimension().getFirst() || y >= game.getDimension().getSecond()){
@@ -105,7 +138,7 @@ public class GridMasterService {
         Tuple<Integer, Integer> oldPosition = new Tuple<>(player.getPosition()[0], player.getPosition()[1]);
         changeScore(game, player, game.getBox(newPosition), game.getBox(oldPosition));
         game.printBoard();
-        gridMasterPersistence.saveGame(game);
+        gridMasterRepository.save(game);
     }
 
     public synchronized void changeScore(GridMaster game, Player player, Box newBox, Box oldBox){
@@ -131,7 +164,7 @@ public class GridMasterService {
     }
 
     public void deleteGridMaster(Integer code) throws GridMasterException{
-        gridMasterPersistence.deleteGame(code);
+        gridMasterRepository.deleteById(code);
     }
 
 }

@@ -9,6 +9,9 @@ public class Box {
     private Tuple<Integer, Integer> position;
     private boolean isBusy;
 
+    public Box(){
+    }
+
     public Box(Tuple<Integer, Integer> position){
         this.position = position;
         this.owner = null;

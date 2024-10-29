@@ -50,7 +50,7 @@ public class GridMasterController {
         }
     }
 
-    @RequestMapping(value = "{code}/players/{name}", method = RequestMethod.GET)
+    @RequestMapping(value = "{code}/player/{name}", method = RequestMethod.GET)
     public ResponseEntity<?> getPlayerByName(@PathVariable Integer code,
                                              @PathVariable String name){
         try {
