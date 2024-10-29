@@ -18,7 +18,10 @@ var home = (function(){
         }
 
         api.createGame(playerName).then(gameCode => {
-            return api.addPlayer(gameCode, playerName); 
+            return api.addPlayer(gameCode, playerName).then(playerData => {
+                game.setPlayerColor(gameCode, playerData.color);
+                return gameCode;
+            }); 
         }).then(() => {
             window.location.href = "game.html";
         }).catch(error => {

@@ -1,4 +1,20 @@
 api=(function(){
+    
+    //Gets
+    var getPlayer = function(gameCode, playerName) {
+        return $.ajax({
+            url: 'http://localhost:8080/games/' + gameCode + '/players/' + playerName,
+            type: 'GET',
+            contentType: "application/json"
+        }).then(function(response) {
+            console.log("Player: ", response);
+            return response;
+        }).catch(function(error) {
+            console.error("Error getting player:", error);
+        });
+    };
+    
+    //Post
     var createGame = function(playerName) {
         return $.ajax({
             url: 'http://localhost:8080/games',
@@ -13,6 +29,7 @@ api=(function(){
         });
     };
 
+    //Puts
     var addPlayer = function(gameCode, playerName) {
         return $.ajax({
             url: 'http://localhost:8080/games/' + gameCode + '/player',
@@ -27,8 +44,11 @@ api=(function(){
         });
     };
 
+
+
     return {
         createGame: createGame,
-        addPlayer: addPlayer
+        addPlayer: addPlayer,
+        getPlayer: getPlayer
     };
 })();

@@ -8,6 +8,20 @@ var game = (function() {
     const playerColor = "#FFA500";
     const grid = Array.from({ length: rows }, () => Array(columns).fill(null));
 
+    var setPlayerColor = function(gameCode, playerName) {
+        api.getPlayer(gameCode, playerName).then(function(player) {
+            // Convertir RGB a hexadecimal
+            const rgb = player.color; // [255, 0, 0]
+            const hexColor = rgbToHex(rgb[0], rgb[1], rgb[2]);
+            playerColor = hexColor;
+            console.log("Player color in hex:", playerColor);
+        });
+    };
+    
+    function rgbToHex(r, g, b) {
+        return "#" + [r, g, b].map(x => x.toString(16).padStart(2, "0")).join("");
+    }
+    
     var loadBoard = function() {
         console.log("rows: ", rows, " columns: ",columns)
         board.style.setProperty('--rows', rows);
@@ -23,6 +37,8 @@ var game = (function() {
 
                 
                 if (i === playerRow && j === playerColumn) {
+                    console.log("PlayerColor: ", playerColor);
+                    board.style.setProperty('--playarColor', playerColor);
                     const hexagon = document.createElement('div');
                     hexagon.classList.add('hexagon');
                     cell.appendChild(hexagon);
@@ -92,7 +108,8 @@ var game = (function() {
     };
 
     return {
-        loadBoard
+        loadBoard,
+        setPlayerColor
     };
 
 })();

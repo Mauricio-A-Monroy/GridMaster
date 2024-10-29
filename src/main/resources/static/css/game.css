@@ -13,6 +13,7 @@ body {
 :root {
     --rows: 5; /* Valor por defecto */
     --columns: 5; /* Valor por defecto */
+    --playarColor: #FFA500;
 }
 
 .board {
@@ -33,7 +34,7 @@ body {
 .hexagon {
     width: 90px; /* Ajusta el tamaño según tus necesidades */
     height: 90px;
-    background-color: #FFA500; /* Color del hexágono */
+    background-color: var(--playarColor); /* Color del hexágono */
     position: absolute; /* Cambia a absoluto */
     left: 50%; /* Posiciona al centro horizontalmente */
     top: 50%; /* Posiciona al centro verticalmente */
@@ -48,7 +49,7 @@ body {
     );
     border: 5px solid #000; /* Borde negro */
     box-sizing: border-box; /* Asegura que el borde no afecte el tamaño total */
-    background-color: #FFA500; /* Color del hexágono */
+    background-color: var(--playarColor); /* Color del hexágono */
     z-index: 1; /* Asegura que el hexágono esté por encima del fondo */
 }
 
