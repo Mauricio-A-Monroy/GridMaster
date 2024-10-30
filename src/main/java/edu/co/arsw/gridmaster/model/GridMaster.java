@@ -27,7 +27,7 @@ public class GridMaster {
         this.maxPlayers = 4;
         this.scores = new ConcurrentHashMap<>();
         this.players = new HashMap<>();
-        this.dimension = new Tuple<>(3, 3);
+        this.dimension = new Tuple<>(100, 100);
         this.color = new Color();
         this.boxes = new ArrayList<>();
         for(int i = 0; i < dimension.getFirst(); i++){

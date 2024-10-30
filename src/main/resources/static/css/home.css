@@ -102,3 +102,10 @@ button {
     width: 300px;
     text-align: center;
 }
+
+#error-message {
+  color: red;
+  display: none;
+  text-align: center; /* Centra el texto horizontalmente */
+  margin-top: 10px; /* Añade un poco de espacio arriba */
+}
