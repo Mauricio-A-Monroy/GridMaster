@@ -14,6 +14,19 @@ api=(function(){
             console.error("Error getting player:", error);
         });
     };
+
+    var getScore = function(gameCode) {
+        return $.ajax({
+            url: 'http://localhost:8080/games/' + gameCode + '/score',
+            type: 'GET',
+            contentType: "application/json"
+        }).then(function(response) {
+            console.log("Scores: ", response);
+            return response;
+        }).catch(function(error) {
+            console.error("Error getting player:", error);
+        });
+    };
     
     //Post
     var createGame = function(playerName) {
@@ -44,11 +57,29 @@ api=(function(){
         });
     };
 
+    var move = function(gameCode, playerName, o1, o2) {
+        console.log(gameCode, playerName);
+        var json = JSON.stringify({ o1: o1, o2 : o2 })
+        console.log(json);
+        return $.ajax({
+            url: 'http://localhost:8080/games/' + gameCode + '/player/' + playerName,
+            type: 'PUT',
+            data: json,
+            contentType: "application/json"
+        }).then(function(response) {
+            console.log("Player was move");
+        }).catch(function(error) {
+            console.error("Error adding player:", error);
+        });
+    }
+
 
 
     return {
-        createGame: createGame,
-        addPlayer: addPlayer,
-        getPlayer: getPlayer
+        createGame,
+        addPlayer,
+        getPlayer,
+        getScore,
+        move
     };
 })();

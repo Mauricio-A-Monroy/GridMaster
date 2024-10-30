@@ -1,10 +1,10 @@
 var game = (function() {
     const board = document.getElementById('board');
-    const rows = 50;
-    const columns = 50;
+    const rows = 100;
+    const columns = 100;
     const cellSize = 10;
-    let playerRow = 25; 
-    let playerColumn = 30; 
+    let playerRow = 50; 
+    let playerColumn = 20; 
     var playerColor = "#FFA500";
     const grid = Array.from({ length: rows }, () => Array(columns).fill(null));
 
@@ -47,6 +47,28 @@ var game = (function() {
                 board.appendChild(cell);
             }
         }
+
+        const gameCode = localStorage.getItem('gameCode');
+
+        return api.getScore(gameCode).then(function(players) {
+            console.log(players);
+            updateScoreBoard(players);
+        });
+    };
+
+    var updateScoreBoard = function(players) {
+        const scoreTableBody = document.getElementById('scoreTableBody');
+        scoreTableBody.innerHTML = ""; // Limpia las filas anteriores
+
+        Object.entries(players).forEach(([player, score], index) => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${index + 1}</td>
+                <td>${player}</td>
+                <td>${score}</td>
+            `;
+            scoreTableBody.appendChild(row);    
+        });
     };
 
     document.addEventListener('keydown', function(event) {
@@ -82,6 +104,18 @@ var game = (function() {
 
         
         positionPlayer(newRow, newColumn); 
+
+        const gameCode = localStorage.getItem('gameCode');
+        const playerName = localStorage.getItem('playerName');
+        
+        console.log(gameCode, playerName, newRow, newColumn);
+
+        api.move(gameCode, playerName, newRow, newColumn);
+
+        return api.getScore(gameCode).then(function(players) {
+            console.log(players);
+            updateScoreBoard(players);
+        });
     };
 
     var positionPlayer = function(newRow, newColumn) {
