@@ -1,18 +1,14 @@
 package edu.co.arsw.gridmaster.model;
 
 import edu.co.arsw.gridmaster.persistance.Tuple;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
-@Document("GridMaster")
 public class GridMaster {
 
-    @Id
-    private Integer id;
+    private Integer code;
     private Integer time;
     private Integer maxPlayers;
     private ConcurrentHashMap<String, Integer> scores;
@@ -22,12 +18,12 @@ public class GridMaster {
     private Color color;
 
     public GridMaster() {
-        this.id = (int) ((Math.random() * (9999 - 1000) + 1000));
+        this.code = (int) ((Math.random() * (9999 - 1000) + 1000));
         this.time = 600;
         this.maxPlayers = 4;
         this.scores = new ConcurrentHashMap<>();
         this.players = new HashMap<>();
-        this.dimension = new Tuple<>(100, 100);
+        this.dimension = new Tuple<>(3, 3);
         this.color = new Color();
         this.boxes = new ArrayList<>();
         for(int i = 0; i < dimension.getFirst(); i++){
@@ -39,11 +35,11 @@ public class GridMaster {
     }
 
     public Integer getCode() {
-        return id;
+        return code;
     }
 
     public void setCode(Integer code) {
-        this.id = code;
+        this.code = code;
     }
 
     public Integer getTime() {
@@ -113,7 +109,7 @@ public class GridMaster {
     @Override
     public String toString() {
         return "Game{" +
-                "code=" + id +
+                "code=" + code +
                 ", time=" + time +
                 ", maxPlayers=" + maxPlayers +
                 ", players=" + players +
