@@ -4,7 +4,7 @@ api=(function(){
     var getPlayer = function(gameCode, playerName) {
         console.log("gameCode: ", gameCode, " playerName: ", playerName);
         return $.ajax({
-            url: 'http://localhost:8080/games/' + gameCode + '/players/' + playerName,
+            url: 'http://localhost:8080/games/' + gameCode + '/player/' + playerName,
             type: 'GET',
             contentType: "application/json"
         }).then(function(response) {
