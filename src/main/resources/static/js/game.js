@@ -14,6 +14,7 @@ var game = (function() {
             const hexColor = rgbToHex(rgb[0], rgb[1], rgb[2]);
             playerColor = hexColor;
             console.log("Player color in hex:", playerColor);
+            loadCompetitorsFromServer();
             return playerColor;
         });
     };
@@ -115,6 +116,9 @@ var game = (function() {
         return api.getScore(gameCode).then(function(players) {
             console.log(players);
             updateScoreBoard(players);
+        }).then(function() {
+            // Enviar mensaje al tópico
+            stompClient.send('/topic/player/' + localStorage.getItem('playerName'), {}, JSON.stringify("Message"));
         });
     };
 
@@ -140,6 +144,52 @@ var game = (function() {
         celda.style.backgroundColor = playerColor;
         // Aquí puedes añadir la lógica para sumar puntos o cambiar el turno
     };
+
+    var loadCompetitorsFromServer = function () {
+        api.getPlayers(localStorage.getItem('gameCode')).then(function(data) {
+            players = data;
+            console.log("players", players);
+            competitors.forEach(
+                function (p) {
+                    console.log("Loading competitors....");
+                    console.log(players);
+                    if (p.name != localStorage.getItem('playerName')) {
+                        connectAndSubscribeToCompetitors();
+                    }
+                }
+            );
+        });
+    };
+
+    function connectAndSubscribeToCompetitors() {
+        var socket = new SockJS('/stompendpoint');
+        stompClient = Stomp.over(socket);
+        console.log("Connecting...");
+        console.log(stompClient);
+        stompClient.connect({}, function (frame) {
+            console.log('Connected: ' + frame);
+            competitors.forEach(
+                    function(p){
+                        if (p.name != localStorage.getItem('playerName')){
+                            stompClient.subscribe('/topic/player/' + p.name, function (data) {
+                                msgdata = JSON.parse(data.body);
+                                console.log(msgdata);
+                                // paintBoard(); Pintar el tablero completo pero creo que puede ser demorado aunque vamos a la segura.
+                                // paintCompetitors(); Obtener la posición de cada jugador y pintarlo? Pero no sé cómo mostrar el trazo de los otros jugadores
+                            });
+                        }
+                    }
+            );
+        });
+    }
+
+    function disconnect() {
+        if (stompClient != null) {
+            stompClient.disconnect();
+        }
+        setConnected(false);
+        console.log("Disconnected");
+    }
 
     return {
         loadBoard,

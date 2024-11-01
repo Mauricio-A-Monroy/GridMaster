@@ -4,7 +4,7 @@ api=(function(){
     var getPlayer = function(gameCode, playerName) {
         console.log("gameCode: ", gameCode, " playerName: ", playerName);
         return $.ajax({
-            url: 'http://localhost:8080/games/' + gameCode + '/player/' + playerName,
+            url: 'http://localhost:8080/games/' + gameCode + '/players/' + playerName,
             type: 'GET',
             contentType: "application/json"
         }).then(function(response) {
@@ -27,6 +27,19 @@ api=(function(){
             console.error("Error getting player:", error);
         });
     };
+
+    var getPlayers = function(gameCode){
+        return $.ajax({
+            url: 'http://localhost:8080/games/' + gameCode + '/players',
+            type: 'GET',
+            contentType: "application/json"
+        }).then(function(response) {
+            console.log("Players: ", response);
+            return response;
+        }).catch(function(error) {
+            console.error("Error getting player:", error);
+        });
+    }
     
     //Post
     var createGame = function(playerName) {
@@ -45,7 +58,7 @@ api=(function(){
     //Puts
     var addPlayer = function(gameCode, playerName) {
         return $.ajax({
-            url: 'http://localhost:8080/games/' + gameCode + '/player',
+            url: 'http://localhost:8080/games/' + gameCode + '/players',
             type: 'PUT',
             data: JSON.stringify({ name: playerName }),
             contentType: "application/json"
@@ -62,7 +75,7 @@ api=(function(){
         var json = JSON.stringify({ o1: o1, o2 : o2 })
         console.log(json);
         return $.ajax({
-            url: 'http://localhost:8080/games/' + gameCode + '/player/' + playerName,
+            url: 'http://localhost:8080/games/' + gameCode + '/players/' + playerName,
             type: 'PUT',
             data: json,
             contentType: "application/json"
