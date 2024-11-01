@@ -7,6 +7,8 @@ var game = (function() {
     let playerColumn = 20; 
     var playerColor = "#FFA500";
     const grid = Array.from({ length: rows }, () => Array(columns).fill(null));
+    var stompClient = null;
+    var competitors = [];
 
     var setPlayerColor = function(gameCode, playerName) {
         return api.getPlayer(gameCode, playerName).then(function(player) {
@@ -147,15 +149,13 @@ var game = (function() {
 
     var loadCompetitorsFromServer = function () {
         api.getPlayers(localStorage.getItem('gameCode')).then(function(data) {
-            players = data;
-            console.log("players", players);
+            competitors = data;
+            console.log("players", competitors);
             competitors.forEach(
                 function (p) {
                     console.log("Loading competitors....");
-                    console.log(players);
-                    if (p.name != localStorage.getItem('playerName')) {
-                        connectAndSubscribeToCompetitors();
-                    }
+                    console.log(competitors);
+                    connectAndSubscribeToCompetitors();
                 }
             );
         });
@@ -170,14 +170,12 @@ var game = (function() {
             console.log('Connected: ' + frame);
             competitors.forEach(
                     function(p){
-                        if (p.name != localStorage.getItem('playerName')){
-                            stompClient.subscribe('/topic/player/' + p.name, function (data) {
-                                msgdata = JSON.parse(data.body);
-                                console.log(msgdata);
-                                // paintBoard(); Pintar el tablero completo pero creo que puede ser demorado aunque vamos a la segura.
-                                // paintCompetitors(); Obtener la posición de cada jugador y pintarlo? Pero no sé cómo mostrar el trazo de los otros jugadores
-                            });
-                        }
+                        stompClient.subscribe('/topic/player/' + p.name, function (data) {
+                            msgdata = JSON.parse(data.body);
+                            console.log(msgdata);
+                            // paintBoard(); Pintar el tablero completo pero creo que puede ser demorado aunque vamos a la segura.
+                            // paintCompetitors(); Obtener la posición de cada jugador y pintarlo? Pero no sé cómo mostrar el trazo de los otros jugadores
+                        });
                     }
             );
         });

@@ -93,6 +93,7 @@ api=(function(){
         addPlayer,
         getPlayer,
         getScore,
+        getPlayers,
         move
     };
 })();
