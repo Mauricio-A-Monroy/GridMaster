@@ -7,6 +7,7 @@ var game = (function() {
     let playerColumn = 20; 
     var playerColor = "#FFA500";
     var gameCode = -1;
+    const boardContainer = document.querySelector('.board-container');
 
     const grid = Array.from({ length: rows }, () => Array(columns).fill(null));
     var stompClient = null;
@@ -36,6 +37,13 @@ var game = (function() {
     }
     
     var loadBoard = function() {
+
+        const board = document.getElementById('board'); // Mueve esto aquí
+        if (!board) {
+            console.error("El elemento 'board' no se encontró.");
+            return; // Sal del método si board es null
+        }
+
         console.log("rows: ", rows, " columns: ",columns)
         board.style.setProperty('--rows', rows);
         board.style.setProperty('--columns', columns);
@@ -50,19 +58,23 @@ var game = (function() {
                 // Almacena la referencia de la celda en la matriz
                 grid[i][j] = cell;
 
-                
-                if (i === playerRow && j === playerColumn) {
-                    const hexagon = document.createElement('div');
-                    hexagon.classList.add('hexagon');
-                    cell.appendChild(hexagon);
-                }
-
                 board.appendChild(cell);
             }
         }
 
+        const playerCell = grid[playerRow][playerColumn];
+        const hexagon = document.createElement('div');
+        hexagon.classList.add('hexagon');
+        playerCell.appendChild(hexagon);
+
         connectAndSubscribe();
 
+        return api.getScore(gameCode).then(function(players) {
+            updateScoreBoard(players);
+        }).then(function() {
+            // Centrar la vista en el jugador después de cargar el tablero
+            centerViewOnPlayer();
+        });
         window.setInterval(sendTime, 1000);
         console.log("Interval set");
 
@@ -134,9 +146,10 @@ var game = (function() {
         }
 
         api.move(gameCode, playerName, newRow, newColumn);
-        
+
         positionPlayer(newRow, newColumn); 
-        
+        centerViewOnPlayer();
+
         console.log("moving player: ", gameCode, this.playerName, newRow, newColumn);
 
         stompClient.send('/topic/player/' + playerName, {}, JSON.stringify("Message"));
@@ -166,6 +179,15 @@ var game = (function() {
         celda.style.backgroundColor = playerColor;
         // Aquí puedes añadir la lógica para sumar puntos o cambiar el turno
     };
+
+    function centerViewOnPlayer() {
+        const cellSize = 30;
+        const offsetX = (playerColumn * cellSize) + (cellSize / 2) - (boardContainer.clientWidth / 2);
+        const offsetY = (playerRow * cellSize) + (cellSize / 2) - (boardContainer.clientHeight / 2);
+        boardContainer.scrollLeft = offsetX;
+        boardContainer.scrollTop = offsetY;
+    }
+
 
     var loadCompetitorsFromServer = function () {
         api.getPlayers(gameCode).then(function(data) {
