@@ -13,23 +13,21 @@ var game = (function() {
     var stompClient = null;
     var players = [];
 
-    var setPlayerConfig = function(gameCode, playerName) {
-        return api.getPlayer(gameCode, playerName).then(function(player) {
+    var setPlayerConfig = function(gameCode, name) {
+        return api.getPlayer(gameCode, name).then(function(player) {
             const rgb = player.color; // [255, 0, 0]
             const hexColor = rgbToHex(rgb[0], rgb[1], rgb[2]);
             playerColor = hexColor;
             console.log("Player color in hex:", playerColor);
+            playerName = player.name;
+            console.log("NOMBRE DEL JUGADOR: ", playerName);
             playerRow = player.position[0];
             playerColumn = player.position[1];
-            //console.log("Player Row:",playerRow, "Player Column:", playerColumn);
-            // loadCompetitorsFromServer();
+            connectAndSubscribe();
+
             return playerColor;
         });
     };
-
-    var setPlayerName = function(newPlayerName){
-        playerName = newPlayerName;
-    }
 
     var setGameCode = function(newCode){
         gameCode = newCode;
@@ -145,25 +143,25 @@ var game = (function() {
 
         api.move(gameCode, playerName, newRow, newColumn);
 
-        positionPlayer(newRow, newColumn); 
+        positionPlayer(newRow, newColumn, playerColor);
         centerViewOnPlayer();
 
         console.log("moving player: ", gameCode, this.playerName, newRow, newColumn);
 
         api.getPlayer(gameCode, playerName).then(function(player) {
-            stompClient.send('/topic/game/ ' + gameCode + '/players/' + playerName, {}, JSON.stringify(player));
+            stompClient.send('/topic/game/' + gameCode + '/players/' + playerName, {}, JSON.stringify(player));
         });
 
         sendScore();
     };
 
-    var positionPlayer = function(newRow, newColumn) {
+    var positionPlayer = function(newRow, newColumn, color) {
         const previousCell = grid[playerRow][playerColumn];
         const previousHexagon = previousCell.querySelector('.hexagon');
         if (previousHexagon) {
             previousCell.removeChild(previousHexagon);
         }
-        captureCells(previousCell);
+        previousCell.style.backgroundColor = color;
 
         playerRow = newRow;
         playerColumn = newColumn;
@@ -175,11 +173,6 @@ var game = (function() {
         currentCell.appendChild(hexagon);
     };
 
-    var captureCells = function(celda) {
-        celda.style.backgroundColor = playerColor;
-        // Aquí puedes añadir la lógica para sumar puntos o cambiar el turno
-    };
-
     function centerViewOnPlayer() {
         const cellSize = 30;
         const offsetX = (playerColumn * cellSize) + (cellSize / 2) - (boardContainer.clientWidth / 2);
@@ -189,21 +182,20 @@ var game = (function() {
     }
 
     function subscribeToPlayers(){
-        api.getPlayers(gameCode).then(function(data) {
-            players = data;
-            console.log("Players: ", players);
-            players.forEach(
-                function (p) {
-                    if(p.name != playerName){
-                        stompClient.subscribe('/topic/game/ ' + gameCode + '/players/' + playerName + p.name, function(data){
-                            player = JSON.parse(data.body);
-                            console.log(player);
-                            // Pintar al jugador
-                        });
-                    }
+        console.log("Players SUBSCRIPTION: ", players);
+        players.forEach(
+            function (p) {
+                if(p.name != playerName){
+                    stompClient.subscribe('/topic/game/' + gameCode + '/players/' + p.name, function(data){
+                        player = JSON.parse(data.body);
+                        row = player.position[0];
+                        column = player.position[1];
+                        color = player.color;
+                        positionPlayer(row, column, color);
+                    });
                 }
-            );
-        });
+            }
+        );
     };
 
     function connectAndSubscribe() {
@@ -213,7 +205,7 @@ var game = (function() {
         console.log(stompClient);
         stompClient.connect({}, function (frame) {
             console.log('Connected: ' + frame);
-            stompClient.subscribe('/topic/game/players', function(data){
+            stompClient.subscribe('/topic/game/' + gameCode + "/players", function(data){
                 console.log("Players received");
                 players = JSON.parse(data.body);
                 subscribeToPlayers();
@@ -225,6 +217,11 @@ var game = (function() {
             stompClient.subscribe('/topic/game/' + gameCode + "/time", function(data){
                 time = JSON.parse(data.body);
                 updateTime(time);
+            });
+
+            api.getPlayers(gameCode).then(function(data) {
+                players = data;
+                stompClient.send('/topic/game/' + gameCode + "/players", {}, JSON.stringify(data));
             });
         });
     }
@@ -240,7 +237,6 @@ var game = (function() {
     return {
         loadBoard,
         setPlayerConfig,
-        setPlayerName,
         setGameCode
     };
 
@@ -252,7 +248,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     var playerName = params.get('playerName');
     var gameCode = params.get('gameCode');
-    game.setPlayerName(playerName);
     game.setGameCode(gameCode);
 
     const gameCodeElement = document.getElementById('gameCode');
