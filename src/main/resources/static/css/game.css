@@ -68,6 +68,19 @@ body {
     z-index: 1000; /* Asegura que esté encima de otros elementos */
 }
 
+/* Estilo del contenedor del tiempo de partida */
+#timerContainer {
+    position: fixed;
+    top: 20px;
+    background-color: rgba(255, 255, 255, 0.9);
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 10px;
+    font-family: 'Jacquard 12', monospace; /* Fuente para el tiempo de juego */
+    font-size: 1.2em; /* Aumenta un poco el tamaño de la fuente */
+    z-index: 1000; /* Asegura que esté encima de otros elementos */
+}
+
 /* Estilo de la tabla de puntajes */
 .score-board {
     position: fixed;

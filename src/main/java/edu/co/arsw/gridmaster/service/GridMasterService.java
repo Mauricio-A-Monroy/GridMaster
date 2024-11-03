@@ -143,7 +143,7 @@ public class GridMasterService {
         Player player = new Player(name);
         player.setColor(game.obtainColor());
         game.addPlayer(player);
-        if(game.getGameState() == GameState.STARTED){
+        if(game.getGameState().equals(GameState.STARTED)){
             while(true){
                 Integer x = game.getDimension().getFirst();
                 Integer y = game.getDimension().getSecond();

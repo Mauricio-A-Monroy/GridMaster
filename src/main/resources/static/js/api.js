@@ -83,9 +83,9 @@ api=(function(){
         });
     };
 
-    var startGame = function(gameCode, playerName) {
+    var startGame = function(gameCode) {
         return $.ajax({
-            url: 'http://localhost:8080/games/' + gameCode + '/start',
+            url: 'http://localhost:8080/games/' + gameCode,
             type: 'PUT',
             contentType: "application/json"
         }).then(function(response) {
@@ -119,6 +119,7 @@ api=(function(){
         getScore,
         getPlayers,
         getTime,
-        move
+        move,
+        startGame
     };
 })();
