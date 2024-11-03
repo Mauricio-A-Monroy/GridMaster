@@ -18,7 +18,7 @@ var game = (function() {
             const hexColor = rgbToHex(rgb[0], rgb[1], rgb[2]);
             playerColor = hexColor;
             console.log("Player color in hex:", playerColor);
-            loadCompetitorsFromServer();
+            // loadCompetitorsFromServer();
             return playerColor;
         });
     };
@@ -61,13 +61,29 @@ var game = (function() {
             }
         }
 
-        const gameCode = localStorage.getItem('gameCode');
+        connectAndSubscribe();
 
-        return api.getScore(gameCode).then(function(players) {
-            console.log(players);
-            updateScoreBoard(players);
-        });
+        window.setInterval(sendTime, 1000);
+        console.log("Interval set");
+
+        sendScore();
     };
+
+    var sendScore = function(){
+        api.getScore(gameCode).then(function(players) {
+            console.log("Score", players);
+            // updateScoreBoard(players);
+            stompClient.send('/topic/game/' + gameCode + "/score", {}, JSON.stringify(players));
+        });
+    }
+
+    var sendTime = function(){
+        api.getTime(gameCode).then(function(time) {
+            console.log("Time", time);
+            // updateScoreBoard(players);
+            stompClient.send('/topic/game/' + gameCode + "/time", {}, JSON.stringify(time));
+        });
+    }
 
     var updateScoreBoard = function(players) {
         const scoreTableBody = document.getElementById('scoreTableBody');
@@ -83,6 +99,8 @@ var game = (function() {
             scoreTableBody.appendChild(row);    
         });
     };
+
+    // var updateTime = function() {}
 
     document.addEventListener('keydown', function(event) {
         switch (event.key) {
@@ -115,20 +133,15 @@ var game = (function() {
             newColumn++;
         }
 
+        api.move(gameCode, playerName, newRow, newColumn);
         
         positionPlayer(newRow, newColumn); 
         
         console.log("moving player: ", gameCode, this.playerName, newRow, newColumn);
 
-        api.move(gameCode, playerName, newRow, newColumn);
+        stompClient.send('/topic/player/' + playerName, {}, JSON.stringify("Message"));
 
-        return api.getScore(gameCode).then(function(players) {
-            console.log(players);
-            updateScoreBoard(players);
-        }).then(function() {
-            // Enviar mensaje al tópico
-            stompClient.send('/topic/player/' + localStorage.getItem('playerName'), {}, JSON.stringify("Message"));
-        });
+        sendScore();
     };
 
     var positionPlayer = function(newRow, newColumn) {
@@ -155,20 +168,20 @@ var game = (function() {
     };
 
     var loadCompetitorsFromServer = function () {
-        api.getPlayers(localStorage.getItem('gameCode')).then(function(data) {
+        api.getPlayers(gameCode).then(function(data) {
             competitors = data;
             console.log("players", competitors);
             competitors.forEach(
                 function (p) {
                     console.log("Loading competitors....");
                     console.log(competitors);
-                    connectAndSubscribeToCompetitors();
+                    connectAndSubscribe();
                 }
             );
         });
     };
 
-    function connectAndSubscribeToCompetitors() {
+    function connectAndSubscribe() {
         var socket = new SockJS('/stompendpoint');
         stompClient = Stomp.over(socket);
         console.log("Connecting...");
@@ -185,6 +198,14 @@ var game = (function() {
                         });
                     }
             );
+            stompClient.subscribe('/topic/game/' + gameCode + "/score", function(data){
+                players = JSON.parse(data.body);
+                updateScoreBoard(players);
+            });
+            stompClient.subscribe('/topic/game/' + gameCode + "/time", function(data){
+                time = JSON.parse(data.body);
+                // updateTime();
+            });
         });
     }
 

@@ -35,7 +35,7 @@ public class GridMasterController {
     @RequestMapping(value = "{code}/score", method = RequestMethod.GET)
     public ResponseEntity<?> getScoreboardByCode(@PathVariable Integer code){
         try {
-            return new ResponseEntity<>(gridMasterService.getScoreBoard(code), HttpStatus.ACCEPTED);
+            return new ResponseEntity<>(gridMasterService.getScoreboard(code), HttpStatus.ACCEPTED);
         } catch (GridMasterException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -55,6 +55,15 @@ public class GridMasterController {
                                              @PathVariable String name){
         try {
             return new ResponseEntity<>(gridMasterService.getPlayerByName(code, name), HttpStatus.ACCEPTED);
+        } catch (GridMasterException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @RequestMapping(value = "{code}/time", method = RequestMethod.GET)
+    public ResponseEntity<?> getTimeByCode(@PathVariable Integer code){
+        try {
+            return new ResponseEntity<>(gridMasterService.getTime(code), HttpStatus.ACCEPTED);
         } catch (GridMasterException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }

@@ -115,6 +115,10 @@ public class GridMaster {
         this.gameState = gameState;
     }
 
+    public void decrementTime(){
+        this.time--;
+    }
+
     @Override
     public String toString() {
         return "Game{" +

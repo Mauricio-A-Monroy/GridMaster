@@ -10,11 +10,9 @@ import edu.co.arsw.gridmaster.persistance.Tuple;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 @Service
 public class GridMasterService {
@@ -44,15 +42,18 @@ public class GridMasterService {
         return player;
     }
 
-    public HashMap<String, Integer> getScoreBoard(Integer code) throws GridMasterException {
+    public Map<String, Integer> getScoreboard(Integer code) throws GridMasterException {
         GridMaster game = gridMasterPersistence.getGameByCode(code);
         ConcurrentHashMap<String, Integer> scores = game.getScores();
-        HashMap<String, Integer> newScores = new HashMap<>();
-        ArrayList<String> sortedKeys = new ArrayList<>(scores.keySet());
-        Collections.sort(sortedKeys);
-        for(String x : sortedKeys){
-            newScores.put(x, scores.get(x));
-        }
+        Map<String, Integer> newScores = scores.entrySet()
+                .stream()
+                .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (e1, e2) -> e1,
+                        LinkedHashMap::new
+                ));
         return newScores;
     }
 
@@ -65,7 +66,51 @@ public class GridMasterService {
     public void startGame(Integer code) throws GridMasterException {
         GridMaster game = gridMasterPersistence.getGameByCode(code);
         game.setGameState(GameState.STARTED);
+        startTime(game);
         setPositions(game);
+    }
+
+    public void startTime(GridMaster game){
+        int gameDuration = game.getTime();
+
+        Timer timer = new Timer();
+
+        TimerTask task = new TimerTask() {
+            @Override
+            public void run() {
+                game.decrementTime();
+                try {
+                    gridMasterPersistence.saveGame(game);
+                } catch (GridMasterException e) {
+                    System.out.println("Error decrementing time.");
+                }
+            }
+        };
+
+        timer.scheduleAtFixedRate(task, 0, 1000);
+
+        TimerTask stopTask = new TimerTask() {
+            @Override
+            public void run() {
+                timer.cancel();
+                try {
+                    endGame(game.getCode());
+                } catch (GridMasterException e) {
+                    System.out.println("Error finishing the game.");
+                }
+                System.out.println("Timer stopped.");
+            }
+        };
+
+        timer.schedule(stopTask, gameDuration * 1000L);
+    }
+
+    public String getTime(Integer code) throws GridMasterException {
+        GridMaster game = gridMasterPersistence.getGameByCode(code);
+        int time = game.getTime();
+        int minutes = time / 60;
+        int seconds = time % 60;
+        return String.format("%02d:%02d", minutes, seconds);
     }
 
     public void endGame(Integer code) throws GridMasterException{
@@ -105,7 +150,7 @@ public class GridMasterService {
                 player.generatePosition(x, y);
                 int[] position = player.getPosition();
                 Box box = game.getBox(new Tuple<>(position[0], position[1]));
-                synchronized (box.getLock()){
+                synchronized (box){
                     if(!box.isBusy()){
                         box.setBusy(true);
                         break;
@@ -132,7 +177,7 @@ public class GridMasterService {
 
     public void changeScore(GridMaster game, Player player, Box newBox, Box oldBox){
         // Just locking the box
-        synchronized (newBox.getLock()){
+        synchronized (newBox){
             // The box is free and nobody is standing there
             if(!newBox.isBusy()){
                 player.setPosition(newBox.getPosition());

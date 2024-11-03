@@ -8,14 +8,12 @@ public class Box {
     private Player owner;
     private Tuple<Integer, Integer> position;
     private boolean isBusy;
-    private Object lock;
 
     public Box(Tuple<Integer, Integer> position){
         this.position = position;
         this.owner = null;
         this.isBusy = false;
         this.color = new int[]{0, 0, 0};
-        this.lock = new Object();
     }
 
     public Box(int[] color, Player owner, Tuple<Integer, Integer> position) {
@@ -50,10 +48,6 @@ public class Box {
 
     public Tuple<Integer, Integer> getPosition() {
         return position;
-    }
-
-    public Object getLock(){
-        return this.lock;
     }
 
 }

@@ -28,6 +28,19 @@ api=(function(){
         });
     };
 
+    var getTime = function(gameCode) {
+            return $.ajax({
+                url: 'http://localhost:8080/games/' + gameCode + '/time',
+                type: 'GET',
+                contentType: "application/json"
+            }).then(function(response) {
+                console.log("Time: ", response);
+                return response;
+            }).catch(function(error) {
+                console.error("Error getting player:", error);
+            });
+        };
+
     var getPlayers = function(gameCode){
         return $.ajax({
             url: 'http://localhost:8080/games/' + gameCode + '/players',
@@ -70,6 +83,19 @@ api=(function(){
         });
     };
 
+    var startGame = function(gameCode, playerName) {
+        return $.ajax({
+            url: 'http://localhost:8080/games/' + gameCode + '/start',
+            type: 'PUT',
+            contentType: "application/json"
+        }).then(function(response) {
+            console.log("Game started");
+            return response;
+        }).catch(function(error) {
+            console.error("Error adding player:", error);
+        });
+    };
+
     var move = function(gameCode, playerName, o1, o2) {
         console.log(gameCode, playerName);
         var json = JSON.stringify({ o1: o1, o2 : o2 })
@@ -86,14 +112,13 @@ api=(function(){
         });
     }
 
-
-
     return {
         createGame,
         addPlayer,
         getPlayer,
         getScore,
         getPlayers,
+        getTime,
         move
     };
 })();
