@@ -3,8 +3,8 @@ var game = (function() {
     const rows = 100;
     const columns = 100;
     var playerName = "";
-    let playerRow = 50; 
-    let playerColumn = 20; 
+    var playerRow = -1;
+    var playerColumn = -1;
     var playerColor = "#FFA500";
     var gameCode = -1;
     const boardContainer = document.querySelector('.board-container');
@@ -13,14 +13,16 @@ var game = (function() {
     var stompClient = null;
     var players = [];
 
-    var setPlayerColor = function(gameCode, playerName) {
+    var setPlayerConfig = function(gameCode, playerName) {
         return api.getPlayer(gameCode, playerName).then(function(player) {
             const rgb = player.color; // [255, 0, 0]
             const hexColor = rgbToHex(rgb[0], rgb[1], rgb[2]);
             playerColor = hexColor;
             console.log("Player color in hex:", playerColor);
-            connectAndSubscribe();
-            stompClient.send('/topic/game/players', {}, JSON.stringify(player));
+            playerRow = player.position[0];
+            playerColumn = player.position[1];
+            //console.log("Player Row:",playerRow, "Player Column:", playerColumn);
+            // loadCompetitorsFromServer();
             return playerColor;
         });
     };
@@ -68,7 +70,7 @@ var game = (function() {
         hexagon.classList.add('hexagon');
         playerCell.appendChild(hexagon);
 
-        // Centrar l0a vista en el jugador después de cargar el tablero
+        // Centrar la vista en el jugador después de cargar el tablero
         centerViewOnPlayer();
 
         window.setInterval(sendTime, 1000);
@@ -86,7 +88,6 @@ var game = (function() {
 
     var sendTime = function(){
         api.getTime(gameCode).then(function(time) {
-            console.log("Time", time);
             stompClient.send('/topic/game/' + gameCode + "/time", {}, JSON.stringify(time));
         });
     }
@@ -104,6 +105,11 @@ var game = (function() {
             `;
             scoreTableBody.appendChild(row);    
         });
+    };
+
+    var updateTime = function(time) {
+        const gameTimer = document.getElementById('timer');
+        gameTimer.textContent = time;
     };
 
     document.addEventListener('keydown', function(event) {
@@ -198,7 +204,7 @@ var game = (function() {
                 }
             );
         });
-    }
+    };
 
     function connectAndSubscribe() {
         var socket = new SockJS('/stompendpoint');
@@ -218,7 +224,7 @@ var game = (function() {
             });
             stompClient.subscribe('/topic/game/' + gameCode + "/time", function(data){
                 time = JSON.parse(data.body);
-                // updateTime(time);
+                updateTime(time);
             });
         });
     }
@@ -233,7 +239,7 @@ var game = (function() {
 
     return {
         loadBoard,
-        setPlayerColor,
+        setPlayerConfig,
         setPlayerName,
         setGameCode
     };
@@ -258,7 +264,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     if (gameCode && playerName) {
-        game.setPlayerColor(gameCode, playerName).then(() => {
+        game.setPlayerConfig(gameCode, playerName).then(() => {
             game.loadBoard();
         });
     } else {

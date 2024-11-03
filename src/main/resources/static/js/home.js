@@ -24,8 +24,11 @@ var home = (function(){
                 return api.addPlayer(gameCode, playerName);
             })
             .then(() => {
+                api.startGame(gameCode);
+            })
+            .then(() => {
                 console.log("Setting player color");
-                game.setPlayerColor(gameCode, playerName);
+                game.setPlayerConfig(gameCode, playerName);
             })
             .then(() => {
                 window.location.href = `game.html?playerName=${encodeURIComponent(playerName)}&gameCode=${encodeURIComponent(gameCode)}`
@@ -71,7 +74,7 @@ var home = (function(){
 
         api.addPlayer(gameCode, playerName)
             .then(() => {
-                game.setPlayerColor(gameCode, playerName); 
+                game.setPlayerConfig(gameCode, playerName);
                 window.location.href = `game.html?playerName=${encodeURIComponent(playerName)}&gameCode=${encodeURIComponent(gameCode)}`
             })
             .catch(error => {
