@@ -53,11 +53,26 @@ body {
     z-index: 1; /* Asegura que el hexágono esté por encima del fondo */
 }
 
+/* Estilo del contenedor del código de partida */
+#gameCodeContainer {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    background-color: rgba(255, 255, 255, 0.9);
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 10px;
+    font-family: 'Jacquard 12', monospace; /* Fuente para el código de juego */
+    font-size: 1.2em; /* Aumenta un poco el tamaño de la fuente */
+    z-index: 1000; /* Asegura que esté encima de otros elementos */
+}
+
+/* Estilo de la tabla de puntajes */
 .score-board {
     position: fixed;
     top: 20px;       /* Ajusta el valor según la separación deseada del borde superior */
     right: 20px;     /* Ajusta el valor según la separación deseada del borde derecho */
-    background-color: rgba(255, 255, 255, 0.9);  /* Fondo semitransparente para visibilidad */
+    background-color: rgba(255, 255, 255, 0.9);
     border: 1px solid #ccc;
     border-radius: 8px;
     padding: 10px;
@@ -65,8 +80,10 @@ body {
     max-height: 300px;
     overflow-y: auto; /* Habilita scroll en caso de que haya muchos jugadores */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    font-family: 'Jacquard 12', monospace; /* Fuente para la tabla */
 }
 
+/* Estilos para la tabla de puntajes */
 .score-board h2 {
     margin: 0;
     font-size: 1.2em;
@@ -92,8 +109,12 @@ body {
     background-color: #f9f9f9;
 }
 
-
-
-
-
-
+/* Estilo para los botones */
+button {
+    font-family: 'Jacquard 12', monospace; /* Fuente para los botones */
+    font-size: 20px;
+    padding: 10px 20px;
+    margin: 10px 0;
+    cursor: pointer;
+    width: 200px;
+}

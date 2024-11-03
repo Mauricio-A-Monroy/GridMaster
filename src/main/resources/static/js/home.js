@@ -3,7 +3,6 @@ var home = (function(){
     const joinGameButton = document.getElementById('joinGameButton');
 
     var createGame = function(playerName) {
-        localStorage.setItem('playerName', playerName);
 
         const errorMessageDiv = document.getElementById('error-message');
     
@@ -29,7 +28,7 @@ var home = (function(){
                 game.setPlayerColor(gameCode, playerName);
             })
             .then(() => {
-                window.location.href = "game.html"
+                window.location.href = `game.html?playerName=${encodeURIComponent(playerName)}&gameCode=${encodeURIComponent(gameCode)}`
             })
             .catch(error => {
                 console.error("Error al crear el juego o añadir el jugador:", error);
@@ -46,7 +45,6 @@ var home = (function(){
     
     var joinGame = function(gameCode, playerName){
         localStorage.setItem('gameCode', gameCode);
-        localStorage.setItem('playerName', playerName);
 
         const errorMessageDiv = document.getElementById('error-message');
     
@@ -73,9 +71,8 @@ var home = (function(){
 
         api.addPlayer(gameCode, playerName)
             .then(() => {
-                console.log("Setting player color");
                 game.setPlayerColor(gameCode, playerName); 
-                window.location.href = "game.html";
+                window.location.href = `game.html?playerName=${encodeURIComponent(playerName)}&gameCode=${encodeURIComponent(gameCode)}`
             })
             .catch(error => {
                 if (error.status === 404) { 

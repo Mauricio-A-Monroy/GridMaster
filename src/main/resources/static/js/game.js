@@ -2,10 +2,12 @@ var game = (function() {
     const board = document.getElementById('board');
     const rows = 100;
     const columns = 100;
-    const cellSize = 10;
+    var playerName = "";
     let playerRow = 50; 
     let playerColumn = 20; 
     var playerColor = "#FFA500";
+    var gameCode = -1;
+
     const grid = Array.from({ length: rows }, () => Array(columns).fill(null));
 
     var setPlayerColor = function(gameCode, playerName) {
@@ -17,6 +19,14 @@ var game = (function() {
             return playerColor;
         });
     };
+
+    var setPlayerName = function(newPlayerName){
+        playerName = newPlayerName;
+    }
+
+    var setGameCode = function(newCode){
+        gameCode = newCode;
+    }
     
     function rgbToHex(r, g, b) {
         return "#" + [r, g, b].map(x => x.toString(16).padStart(2, "0")).join("");
@@ -104,11 +114,8 @@ var game = (function() {
 
         
         positionPlayer(newRow, newColumn); 
-
-        const gameCode = localStorage.getItem('gameCode');
-        const playerName = localStorage.getItem('playerName');
         
-        console.log(gameCode, playerName, newRow, newColumn);
+        console.log("moving player: ", gameCode, this.playerName, newRow, newColumn);
 
         api.move(gameCode, playerName, newRow, newColumn);
 
@@ -143,15 +150,30 @@ var game = (function() {
 
     return {
         loadBoard,
-        setPlayerColor
+        setPlayerColor,
+        setPlayerName,
+        setGameCode
     };
 
 })();
 
 document.addEventListener('DOMContentLoaded', function() {
-    const gameCode = localStorage.getItem('gameCode');
-    const playerName = localStorage.getItem('playerName');
+    
+    var params = new URLSearchParams(window.location.search);
 
+    var playerName = params.get('playerName');
+    var gameCode = params.get('gameCode');
+    game.setPlayerName(playerName);
+    game.setGameCode(gameCode);
+
+    const gameCodeElement = document.getElementById('gameCode');
+    
+    if (gameCode && gameCodeElement) {
+        gameCodeElement.textContent = gameCode;
+    } else {
+        console.error("El elemento gameCode no se encontró o el código de partida está ausente.");
+    }
+    
     if (gameCode && playerName) {
         game.setPlayerColor(gameCode, playerName).then(() => {
             game.loadBoard();
@@ -159,4 +181,5 @@ document.addEventListener('DOMContentLoaded', function() {
     } else {
         console.error("Game code or player name is missing.");
     }
+
 });
