@@ -3,7 +3,6 @@ package edu.co.arsw.gridmaster.model;
 import edu.co.arsw.gridmaster.persistance.Tuple;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class GridMaster {
@@ -12,20 +11,22 @@ public class GridMaster {
     private Integer time;
     private Integer maxPlayers;
     private ConcurrentHashMap<String, Integer> scores;
-    private HashMap<String, Player> players;
+    private ConcurrentHashMap<String, Player> players;
     private Tuple<Integer, Integer> dimension;
     private ArrayList<ArrayList<Box>> boxes;
     private Color color;
+    private GameState gameState;
 
     public GridMaster() {
         this.code = (int) ((Math.random() * (9999 - 1000) + 1000));
         this.time = 600;
         this.maxPlayers = 4;
         this.scores = new ConcurrentHashMap<>();
-        this.players = new HashMap<>();
+        this.players = new ConcurrentHashMap<>();
         this.dimension = new Tuple<>(100, 100);
         this.color = new Color();
         this.boxes = new ArrayList<>();
+        this.gameState = GameState.WAITING_FOR_PLAYERS;
         for(int i = 0; i < dimension.getFirst(); i++){
             boxes.add(new ArrayList<>());
             for(int j = 0; j < dimension.getSecond(); j++){
@@ -66,11 +67,11 @@ public class GridMaster {
         this.scores = scores;
     }
 
-    public HashMap<String, Player> getPlayers() {
+    public ConcurrentHashMap<String, Player> getPlayers() {
         return players;
     }
 
-    public void setPlayers(HashMap<String, Player> players) {
+    public void setPlayers(ConcurrentHashMap<String, Player> players) {
         this.players = players;
     }
 
@@ -104,6 +105,14 @@ public class GridMaster {
 
     public int[] obtainColor(){
         return color.getColor();
+    }
+
+    public GameState getGameState() {
+        return gameState;
+    }
+
+    public void setGameState(GameState gameState) {
+        this.gameState = gameState;
     }
 
     @Override

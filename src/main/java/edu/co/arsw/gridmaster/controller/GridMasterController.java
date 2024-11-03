@@ -50,7 +50,7 @@ public class GridMasterController {
         }
     }
 
-    @RequestMapping(value = "{code}/player/{name}", method = RequestMethod.GET)
+    @RequestMapping(value = "{code}/players/{name}", method = RequestMethod.GET)
     public ResponseEntity<?> getPlayerByName(@PathVariable Integer code,
                                              @PathVariable String name){
         try {
@@ -83,7 +83,7 @@ public class GridMasterController {
         return new ResponseEntity<>(HttpStatus.ACCEPTED);
     }
 
-    @RequestMapping(value = "{code}/player", method = RequestMethod.PUT)
+    @RequestMapping(value = "{code}/players", method = RequestMethod.PUT)
     public ResponseEntity<?> addPlayer(@PathVariable Integer code,
                                      @RequestBody Player player){
         try {
@@ -94,7 +94,7 @@ public class GridMasterController {
         return new ResponseEntity<>(HttpStatus.ACCEPTED);
     }
 
-    @RequestMapping(value = "{code}/player/{name}", method = RequestMethod.PUT)
+    @RequestMapping(value = "{code}/players/{name}", method = RequestMethod.PUT)
     public ResponseEntity<?> movePlayer(@PathVariable Integer code,
                                         @PathVariable String name,
                                         @RequestBody Tuple<Integer, Integer> newPosition){
