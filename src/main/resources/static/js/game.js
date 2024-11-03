@@ -11,7 +11,7 @@ var game = (function() {
 
     const grid = Array.from({ length: rows }, () => Array(columns).fill(null));
     var stompClient = null;
-    var competitors = [];
+    var players = [];
 
     var setPlayerColor = function(gameCode, playerName) {
         return api.getPlayer(gameCode, playerName).then(function(player) {
@@ -19,7 +19,8 @@ var game = (function() {
             const hexColor = rgbToHex(rgb[0], rgb[1], rgb[2]);
             playerColor = hexColor;
             console.log("Player color in hex:", playerColor);
-            // loadCompetitorsFromServer();
+            connectAndSubscribe();
+            stompClient.send('/topic/game/players', {}, JSON.stringify(player));
             return playerColor;
         });
     };
@@ -67,9 +68,7 @@ var game = (function() {
         hexagon.classList.add('hexagon');
         playerCell.appendChild(hexagon);
 
-        connectAndSubscribe();
-
-        // Centrar la vista en el jugador después de cargar el tablero
+        // Centrar l0a vista en el jugador después de cargar el tablero
         centerViewOnPlayer();
 
         window.setInterval(sendTime, 1000);
@@ -81,7 +80,6 @@ var game = (function() {
     var sendScore = function(){
         api.getScore(gameCode).then(function(players) {
             console.log("Score", players);
-            // updateScoreBoard(players);
             stompClient.send('/topic/game/' + gameCode + "/score", {}, JSON.stringify(players));
         });
     }
@@ -89,7 +87,6 @@ var game = (function() {
     var sendTime = function(){
         api.getTime(gameCode).then(function(time) {
             console.log("Time", time);
-            // updateScoreBoard(players);
             stompClient.send('/topic/game/' + gameCode + "/time", {}, JSON.stringify(time));
         });
     }
@@ -108,8 +105,6 @@ var game = (function() {
             scoreTableBody.appendChild(row);    
         });
     };
-
-    // var updateTime = function() {}
 
     document.addEventListener('keydown', function(event) {
         switch (event.key) {
@@ -149,7 +144,9 @@ var game = (function() {
 
         console.log("moving player: ", gameCode, this.playerName, newRow, newColumn);
 
-        stompClient.send('/topic/player/' + playerName, {}, JSON.stringify("Message"));
+        api.getPlayer(gameCode, playerName).then(function(player) {
+            stompClient.send('/topic/game/ ' + gameCode + '/players/' + playerName, {}, JSON.stringify(player));
+        });
 
         sendScore();
     };
@@ -185,20 +182,23 @@ var game = (function() {
         boardContainer.scrollTop = offsetY;
     }
 
-
-    var loadCompetitorsFromServer = function () {
+    function subscribeToPlayers(){
         api.getPlayers(gameCode).then(function(data) {
-            competitors = data;
-            console.log("players", competitors);
-            competitors.forEach(
+            players = data;
+            console.log("Players: ", players);
+            players.forEach(
                 function (p) {
-                    console.log("Loading competitors....");
-                    console.log(competitors);
-                    connectAndSubscribe();
+                    if(p.name != playerName){
+                        stompClient.subscribe('/topic/game/ ' + gameCode + '/players/' + playerName + p.name, function(data){
+                            player = JSON.parse(data.body);
+                            console.log(player);
+                            // Pintar al jugador
+                        });
+                    }
                 }
             );
         });
-    };
+    }
 
     function connectAndSubscribe() {
         var socket = new SockJS('/stompendpoint');
@@ -207,23 +207,18 @@ var game = (function() {
         console.log(stompClient);
         stompClient.connect({}, function (frame) {
             console.log('Connected: ' + frame);
-            competitors.forEach(
-                    function(p){
-                        stompClient.subscribe('/topic/player/' + p.name, function (data) {
-                            msgdata = JSON.parse(data.body);
-                            console.log(msgdata);
-                            // paintBoard(); Pintar el tablero completo pero creo que puede ser demorado aunque vamos a la segura.
-                            // paintCompetitors(); Obtener la posición de cada jugador y pintarlo? Pero no sé cómo mostrar el trazo de los otros jugadores
-                        });
-                    }
-            );
+            stompClient.subscribe('/topic/game/players', function(data){
+                console.log("Players received");
+                players = JSON.parse(data.body);
+                subscribeToPlayers();
+            });
             stompClient.subscribe('/topic/game/' + gameCode + "/score", function(data){
                 players = JSON.parse(data.body);
                 updateScoreBoard(players);
             });
             stompClient.subscribe('/topic/game/' + gameCode + "/time", function(data){
                 time = JSON.parse(data.body);
-                // updateTime();
+                // updateTime(time);
             });
         });
     }

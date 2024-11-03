@@ -82,7 +82,7 @@ public class GridMasterController {
 
     // PUT REQUESTS
 
-    @RequestMapping(value = "{code}/start", method = RequestMethod.PUT)
+    @RequestMapping(value = "{code}", method = RequestMethod.PUT)
     public ResponseEntity<?> startGame(@PathVariable Integer code){
         try {
             gridMasterService.startGame(code);

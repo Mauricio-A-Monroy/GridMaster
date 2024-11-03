@@ -71,14 +71,19 @@ public class GridMasterService {
     }
 
     public void startTime(GridMaster game){
-        int gameDuration = game.getTime();
-
         Timer timer = new Timer();
-
         TimerTask task = new TimerTask() {
             @Override
             public void run() {
                 game.decrementTime();
+                if(game.getTime() < 0){
+                    timer.cancel();
+                    try {
+                        endGame(game.getCode());
+                    } catch (GridMasterException e) {
+                        System.out.println("Error finishing game.");
+                    }
+                }
                 try {
                     gridMasterPersistence.saveGame(game);
                 } catch (GridMasterException e) {
@@ -88,21 +93,6 @@ public class GridMasterService {
         };
 
         timer.scheduleAtFixedRate(task, 0, 1000);
-
-        TimerTask stopTask = new TimerTask() {
-            @Override
-            public void run() {
-                timer.cancel();
-                try {
-                    endGame(game.getCode());
-                } catch (GridMasterException e) {
-                    System.out.println("Error finishing the game.");
-                }
-                System.out.println("Timer stopped.");
-            }
-        };
-
-        timer.schedule(stopTask, gameDuration * 1000L);
     }
 
     public String getTime(Integer code) throws GridMasterException {
@@ -143,7 +133,7 @@ public class GridMasterService {
         Player player = new Player(name);
         player.setColor(game.obtainColor());
         game.addPlayer(player);
-        if(game.getGameState() == GameState.STARTED){
+        if(game.getGameState().equals(GameState.STARTED)){
             while(true){
                 Integer x = game.getDimension().getFirst();
                 Integer y = game.getDimension().getSecond();
