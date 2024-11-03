@@ -71,7 +71,7 @@ var game = (function() {
 
         // Centrar la vista en el jugador después de cargar el tablero
         centerViewOnPlayer();
-        
+
         window.setInterval(sendTime, 1000);
         console.log("Interval set");
 
