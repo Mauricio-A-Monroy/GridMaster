@@ -76,7 +76,7 @@ public class GridMasterService {
             @Override
             public void run() {
                 game.decrementTime();
-                if(game.getTime() < 0){
+                if(game.getTime() == 0){
                     timer.cancel();
                     try {
                         endGame(game.getCode());
