@@ -35,7 +35,7 @@ public class GridMasterController {
     @RequestMapping(value = "{code}/score", method = RequestMethod.GET)
     public ResponseEntity<?> getScoreboardByCode(@PathVariable Integer code){
         try {
-            return new ResponseEntity<>(gridMasterService.getScoreBoard(code), HttpStatus.ACCEPTED);
+            return new ResponseEntity<>(gridMasterService.getScoreboard(code), HttpStatus.ACCEPTED);
         } catch (GridMasterException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -50,11 +50,20 @@ public class GridMasterController {
         }
     }
 
-    @RequestMapping(value = "{code}/player/{name}", method = RequestMethod.GET)
+    @RequestMapping(value = "{code}/players/{name}", method = RequestMethod.GET)
     public ResponseEntity<?> getPlayerByName(@PathVariable Integer code,
                                              @PathVariable String name){
         try {
             return new ResponseEntity<>(gridMasterService.getPlayerByName(code, name), HttpStatus.ACCEPTED);
+        } catch (GridMasterException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @RequestMapping(value = "{code}/time", method = RequestMethod.GET)
+    public ResponseEntity<?> getTimeByCode(@PathVariable Integer code){
+        try {
+            return new ResponseEntity<>(gridMasterService.getTime(code), HttpStatus.ACCEPTED);
         } catch (GridMasterException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -73,7 +82,7 @@ public class GridMasterController {
 
     // PUT REQUESTS
 
-    @RequestMapping(value = "{code}/start", method = RequestMethod.PUT)
+    @RequestMapping(value = "{code}", method = RequestMethod.PUT)
     public ResponseEntity<?> startGame(@PathVariable Integer code){
         try {
             gridMasterService.startGame(code);
@@ -83,7 +92,7 @@ public class GridMasterController {
         return new ResponseEntity<>(HttpStatus.ACCEPTED);
     }
 
-    @RequestMapping(value = "{code}/player", method = RequestMethod.PUT)
+    @RequestMapping(value = "{code}/players", method = RequestMethod.PUT)
     public ResponseEntity<?> addPlayer(@PathVariable Integer code,
                                      @RequestBody Player player){
         try {
@@ -94,7 +103,7 @@ public class GridMasterController {
         return new ResponseEntity<>(HttpStatus.ACCEPTED);
     }
 
-    @RequestMapping(value = "{code}/player/{name}", method = RequestMethod.PUT)
+    @RequestMapping(value = "{code}/players/{name}", method = RequestMethod.PUT)
     public ResponseEntity<?> movePlayer(@PathVariable Integer code,
                                         @PathVariable String name,
                                         @RequestBody Tuple<Integer, Integer> newPosition){

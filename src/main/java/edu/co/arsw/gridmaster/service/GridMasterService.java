@@ -1,6 +1,7 @@
 package edu.co.arsw.gridmaster.service;
 
 import edu.co.arsw.gridmaster.model.Box;
+import edu.co.arsw.gridmaster.model.GameState;
 import edu.co.arsw.gridmaster.model.GridMaster;
 import edu.co.arsw.gridmaster.model.Player;
 import edu.co.arsw.gridmaster.model.exceptions.*;
@@ -9,11 +10,9 @@ import edu.co.arsw.gridmaster.persistance.Tuple;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 @Service
 public class GridMasterService {
@@ -43,15 +42,18 @@ public class GridMasterService {
         return player;
     }
 
-    public HashMap<String, Integer> getScoreBoard(Integer code) throws GridMasterException {
+    public Map<String, Integer> getScoreboard(Integer code) throws GridMasterException {
         GridMaster game = gridMasterPersistence.getGameByCode(code);
         ConcurrentHashMap<String, Integer> scores = game.getScores();
-        HashMap<String, Integer> newScores = new HashMap<>();
-        ArrayList<String> sortedKeys = new ArrayList<>(scores.keySet());
-        Collections.sort(sortedKeys);
-        for(String x : sortedKeys){
-            newScores.put(x, scores.get(x));
-        }
+        Map<String, Integer> newScores = scores.entrySet()
+                .stream()
+                .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (e1, e2) -> e1,
+                        LinkedHashMap::new
+                ));
         return newScores;
     }
 
@@ -63,7 +65,47 @@ public class GridMasterService {
 
     public void startGame(Integer code) throws GridMasterException {
         GridMaster game = gridMasterPersistence.getGameByCode(code);
+        game.setGameState(GameState.STARTED);
+        startTime(game);
         setPositions(game);
+    }
+
+    public void startTime(GridMaster game){
+        Timer timer = new Timer();
+        TimerTask task = new TimerTask() {
+            @Override
+            public void run() {
+                game.decrementTime();
+                if(game.getTime() < 0){
+                    timer.cancel();
+                    try {
+                        endGame(game.getCode());
+                    } catch (GridMasterException e) {
+                        System.out.println("Error finishing game.");
+                    }
+                }
+                try {
+                    gridMasterPersistence.saveGame(game);
+                } catch (GridMasterException e) {
+                    System.out.println("Error decrementing time.");
+                }
+            }
+        };
+
+        timer.scheduleAtFixedRate(task, 0, 1000);
+    }
+
+    public String getTime(Integer code) throws GridMasterException {
+        GridMaster game = gridMasterPersistence.getGameByCode(code);
+        int time = game.getTime();
+        int minutes = time / 60;
+        int seconds = time % 60;
+        return String.format("%02d:%02d", minutes, seconds);
+    }
+
+    public void endGame(Integer code) throws GridMasterException{
+        GridMaster game = gridMasterPersistence.getGameByCode(code);
+        game.setGameState(GameState.FINISHED);
     }
 
     public void setPositions(GridMaster game) throws GridMasterException {
@@ -80,7 +122,7 @@ public class GridMasterService {
         gridMasterPersistence.saveGame(game);
     }
 
-    public synchronized void addPlayer(Integer code, String name) throws GridMasterException {
+    public void addPlayer(Integer code, String name) throws GridMasterException {
         GridMaster game = gridMasterPersistence.getGameByCode(code);
         if(game.getMaxPlayers() == game.getPlayers().size()){
             throw new GameException("Room is full.");
@@ -91,6 +133,21 @@ public class GridMasterService {
         Player player = new Player(name);
         player.setColor(game.obtainColor());
         game.addPlayer(player);
+        if(game.getGameState().equals(GameState.STARTED)){
+            while(true){
+                Integer x = game.getDimension().getFirst();
+                Integer y = game.getDimension().getSecond();
+                player.generatePosition(x, y);
+                int[] position = player.getPosition();
+                Box box = game.getBox(new Tuple<>(position[0], position[1]));
+                synchronized (box){
+                    if(!box.isBusy()){
+                        box.setBusy(true);
+                        break;
+                    }
+                }
+            }
+        }
         gridMasterPersistence.saveGame(game);
     }
 
@@ -103,29 +160,33 @@ public class GridMasterService {
         }
         Player player = game.getPlayerByName(playerName);
         Tuple<Integer, Integer> oldPosition = new Tuple<>(player.getPosition()[0], player.getPosition()[1]);
+        player.setLastPosition(oldPosition);
         changeScore(game, player, game.getBox(newPosition), game.getBox(oldPosition));
-        game.printBoard();
+        // game.printBoard();
         gridMasterPersistence.saveGame(game);
     }
 
-    public synchronized void changeScore(GridMaster game, Player player, Box newBox, Box oldBox){
-        // The box is free and nobody is standing there
-        if(!newBox.isBusy()){
-            player.setPosition(newBox.getPosition());
+    public void changeScore(GridMaster game, Player player, Box newBox, Box oldBox){
+        // Just locking the box
+        synchronized (newBox){
+            // The box is free and nobody is standing there
+            if(!newBox.isBusy()){
+                player.setPosition(newBox.getPosition());
 
-            player.incrementScore();
-            game.updateScoreOfPlayer(player.getName(), player.getScore().get());
+                player.incrementScore();
+                game.updateScoreOfPlayer(player.getName(), player.getScore().get());
 
-            oldBox.setBusy(false);
-            oldBox.setOwner(player);
-            oldBox.setColor(player.getColor());
+                oldBox.setBusy(false);
+                oldBox.setOwner(player);
+                oldBox.setColor(player.getColor());
 
-            newBox.setBusy(true);
-            // Decrementing opponent score
-            if(newBox.getOwner() != null){
-                Player opponent = newBox.getOwner();
-                opponent.decrementScore();
-                game.updateScoreOfPlayer(opponent.getName(), opponent.getScore().get());
+                newBox.setBusy(true);
+                // Decrementing opponent score
+                if(newBox.getOwner() != null){
+                    Player opponent = newBox.getOwner();
+                    opponent.decrementScore();
+                    game.updateScoreOfPlayer(opponent.getName(), opponent.getScore().get());
+                }
             }
         }
     }

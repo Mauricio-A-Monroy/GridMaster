@@ -16,48 +16,90 @@ body {
     --playarColor: #FFA500;
 }
 
+.board-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Ocupa toda la altura de la ventana */
+    width: 100vw; /* Ocupa todo el ancho de la ventana */
+    overflow: hidden; /* Elimina cualquier barra de desplazamiento en el contenedor */
+    position: relative; /* Para centrar elementos en pantalla */
+}
+
 .board {
     display: grid;
-    grid-template-columns: repeat(var(--columns), 100px);
-    grid-template-rows: repeat(var(--rows), 100px);
-    gap: 2px;
+    width: 100%; /* Asegúrate de que el tablero se ajuste al tamaño del contenedor */
+    height: 100%;
+    grid-template-columns: repeat(var(--columns), 1fr);
+    grid-template-rows: repeat(var(--rows), 1fr);
 }
 
 .cell {
-    background-color: #ddd;
-    border: 1px solid #999;
-    cursor: pointer;
-    position: relative; /* Necesario para el posicionamiento absoluto del hexágono */
+    width: 30px;
+    height: 30px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
 }
 
-/* Estilos para el hexágono */
 .hexagon {
-    width: 90px; /* Ajusta el tamaño según tus necesidades */
-    height: 90px;
-    background-color: var(--playarColor); /* Color del hexágono */
-    position: absolute; /* Cambia a absoluto */
-    left: 50%; /* Posiciona al centro horizontalmente */
-    top: 50%; /* Posiciona al centro verticalmente */
-    transform: translate(-50%, -50%); /* Centra el hexágono */
-    clip-path: polygon(
-        50% 0%,
-        100% 25%,
-        100% 75%,
-        50% 100%,
-        0% 75%,
-        0% 25%
-    );
-    border: 5px solid #000; /* Borde negro */
-    box-sizing: border-box; /* Asegura que el borde no afecte el tamaño total */
-    background-color: var(--playarColor); /* Color del hexágono */
-    z-index: 1; /* Asegura que el hexágono esté por encima del fondo */
+    width: 20px;
+    height: 20px;
+    background-color: var(--playarColor, #FFA500);
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    margin: auto;
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+    border: 2px solid black; /* Añade un borde negro */
 }
 
+.hexagon-other-player {
+    width: 20px;
+    height: 20px;
+    background-color: var(--playarColor, #FFA500);
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    margin: auto;
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+    border: 2px solid black;
+    box-sizing: border-box;
+}
+
+
+/* Estilo del contenedor del código de partida */
+#gameCodeContainer {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    background-color: rgba(255, 255, 255, 0.9);
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 10px;
+    font-family: 'Jacquard 12', monospace; /* Fuente para el código de juego */
+    font-size: 1.2em; /* Aumenta un poco el tamaño de la fuente */
+    z-index: 1000; /* Asegura que esté encima de otros elementos */
+}
+
+/* Estilo del contenedor del tiempo de partida */
+#timerContainer {
+    position: fixed;
+    top: 20px;
+    background-color: rgba(255, 255, 255, 0.9);
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 10px;
+    font-family: 'Jacquard 12', monospace; /* Fuente para el tiempo de juego */
+    font-size: 1.2em; /* Aumenta un poco el tamaño de la fuente */
+    z-index: 1000; /* Asegura que esté encima de otros elementos */
+}
+
+/* Estilo de la tabla de puntajes */
 .score-board {
     position: fixed;
     top: 20px;       /* Ajusta el valor según la separación deseada del borde superior */
     right: 20px;     /* Ajusta el valor según la separación deseada del borde derecho */
-    background-color: rgba(255, 255, 255, 0.9);  /* Fondo semitransparente para visibilidad */
+    background-color: rgba(255, 255, 255, 0.9);
     border: 1px solid #ccc;
     border-radius: 8px;
     padding: 10px;
@@ -65,8 +107,10 @@ body {
     max-height: 300px;
     overflow-y: auto; /* Habilita scroll en caso de que haya muchos jugadores */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    font-family: 'Jacquard 12', monospace; /* Fuente para la tabla */
 }
 
+/* Estilos para la tabla de puntajes */
 .score-board h2 {
     margin: 0;
     font-size: 1.2em;
@@ -92,8 +136,12 @@ body {
     background-color: #f9f9f9;
 }
 
-
-
-
-
-
+/* Estilo para los botones */
+button {
+    font-family: 'Jacquard 12', monospace; /* Fuente para los botones */
+    font-size: 20px;
+    padding: 10px 20px;
+    margin: 10px 0;
+    cursor: pointer;
+    width: 200px;
+}
