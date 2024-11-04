@@ -13,14 +13,16 @@ public class Player {
     private String name;
     private int[] color;
     private AtomicInteger score;
-    private Tuple<Integer, Integer> position;
+    private Tuple<Integer, Integer> currentPosition;
+    private Tuple<Integer, Integer> lastPosition;
 
     @JsonCreator
     public Player(@JsonProperty("name") String name){
         this.name = name;
         this.score = new AtomicInteger(0);
         this.color = new int[]{0, 0, 0};
-        this.position = new Tuple<>(0, 0);
+        this.currentPosition = new Tuple<>(0, 0);
+        this.lastPosition = new Tuple<>(0, 0);
     }
 
     public String getName() {
@@ -47,6 +49,14 @@ public class Player {
         this.score = score;
     }
 
+    public int[] getLastPosition() {
+        return new int[]{this.lastPosition.getFirst(), this.lastPosition.getSecond()};
+    }
+
+    public void setLastPosition(Tuple<Integer, Integer> oldPosition){
+        this.lastPosition = oldPosition;
+    }
+
     public void incrementScore(){
         this.score.incrementAndGet();
     }
@@ -56,27 +66,27 @@ public class Player {
     }
 
     public int[] getPosition() {
-        return new int[]{this.position.getFirst(), this.position.getSecond()};
+        return new int[]{this.currentPosition.getFirst(), this.currentPosition.getSecond()};
     }
 
     public void setPosition(Tuple<Integer, Integer> position) {
-        this.position = position;
+        this.currentPosition = position;
     }
 
     public void generatePosition(Integer x, Integer y) {
         Random rand = new Random();
-        this.position = new Tuple<>(rand.nextInt(x), rand.nextInt(y));
+        this.currentPosition = new Tuple<>(rand.nextInt(x), rand.nextInt(y));
     }
 
     public boolean isLocatedAt(Integer x, Integer y){
-        return (Objects.equals(this.position.getFirst(), x) && Objects.equals(this.position.getSecond(), y));
+        return (Objects.equals(this.currentPosition.getFirst(), x) && Objects.equals(this.currentPosition.getSecond(), y));
     }
 
     @Override
     public String toString() {
         return "Player{" +
                 "name='" + name + '\'' +
-                ", position=" + position.getFirst() + " " + position.getSecond() +
+                ", position=" + currentPosition.getFirst() + " " + currentPosition.getSecond() +
                 '}';
     }
 }
