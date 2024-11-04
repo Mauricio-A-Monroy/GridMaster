@@ -6,6 +6,8 @@ import edu.co.arsw.gridmaster.persistance.Tuple;
 
 import java.util.Objects;
 import java.util.Random;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Player {
@@ -15,12 +17,14 @@ public class Player {
     private AtomicInteger score;
     private Tuple<Integer, Integer> currentPosition;
     private Tuple<Integer, Integer> lastPosition;
+    private Set<Tuple<Integer, Integer>> trace;
 
     @JsonCreator
     public Player(@JsonProperty("name") String name){
         this.name = name;
         this.score = new AtomicInteger(0);
         this.color = new int[]{0, 0, 0};
+        this.trace = ConcurrentHashMap.newKeySet();
         this.currentPosition = new Tuple<>(0, 0);
         this.lastPosition = new Tuple<>(0, 0);
     }
@@ -80,6 +84,22 @@ public class Player {
 
     public boolean isLocatedAt(Integer x, Integer y){
         return (Objects.equals(this.currentPosition.getFirst(), x) && Objects.equals(this.currentPosition.getSecond(), y));
+    }
+
+    public Set<Tuple<Integer, Integer>> getTrace(){
+        return this.trace;
+    }
+
+    public void setTrace(Set<Tuple<Integer, Integer>> newTrace){
+        this.trace = newTrace;
+    }
+
+    public void addToTrace(Tuple<Integer, Integer> tuple){
+        trace.add(tuple);
+    }
+
+    public void removeFromTrace(Tuple<Integer, Integer> tuple){
+        trace.remove(tuple);
     }
 
     @Override
