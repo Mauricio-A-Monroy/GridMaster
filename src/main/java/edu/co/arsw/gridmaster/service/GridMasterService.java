@@ -45,7 +45,16 @@ public class GridMasterService {
     public Map<String, Integer> getScoreboard(Integer code) throws GridMasterException {
         GridMaster game = gridMasterPersistence.getGameByCode(code);
         ConcurrentHashMap<String, Integer> scores = game.getScores();
-        Map<String, Integer> newScores = scores.entrySet()
+        ConcurrentHashMap<String, Integer> topTen = new ConcurrentHashMap<>();
+        int cont = 0;
+        for(String key : scores.keySet()){
+            if(cont == 10){
+                break;
+            }
+            topTen.put(key, scores.get(key));
+            cont++;
+        }
+        Map<String, Integer> newScores = topTen.entrySet()
                 .stream()
                 .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
                 .collect(Collectors.toMap(
