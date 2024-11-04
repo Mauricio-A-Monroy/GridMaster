@@ -160,6 +160,7 @@ public class GridMasterService {
         }
         Player player = game.getPlayerByName(playerName);
         Tuple<Integer, Integer> oldPosition = new Tuple<>(player.getPosition()[0], player.getPosition()[1]);
+        player.setLastPosition(oldPosition);
         changeScore(game, player, game.getBox(newPosition), game.getBox(oldPosition));
         // game.printBoard();
         gridMasterPersistence.saveGame(game);
