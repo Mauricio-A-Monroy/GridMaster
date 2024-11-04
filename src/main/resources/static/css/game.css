@@ -53,6 +53,19 @@ body {
     border: 2px solid black; /* Añade un borde negro */
 }
 
+.hexagon-other-player {
+    width: 20px;
+    height: 20px;
+    background-color: var(--playarColor, #FFA500);
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    margin: auto;
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+    border: 2px solid black;
+    box-sizing: border-box;
+}
+
 
 /* Estilo del contenedor del código de partida */
 #gameCodeContainer {

@@ -12,6 +12,7 @@ var game = (function() {
     const grid = Array.from({ length: rows }, () => Array(columns).fill(null));
     var stompClient = null;
     var players = [];
+    var pendingMessages = [];
 
     var setPlayerConfig = function(gameCode, name) {
         return api.getPlayer(gameCode, name).then(function(player) {
@@ -78,16 +79,25 @@ var game = (function() {
     };
 
     var sendScore = function(){
+
+        api.getScore(gameCode).then(function(players) {
+            sendMessage('/topic/game/' + gameCode + "/score", players);
+        });
+        /*
         api.getScore(gameCode).then(function(players) {
             console.log("Score", players);
             stompClient.send('/topic/game/' + gameCode + "/score", {}, JSON.stringify(players));
-        });
+        });*/
     }
 
     var sendTime = function(){
         api.getTime(gameCode).then(function(time) {
-            stompClient.send('/topic/game/' + gameCode + "/time", {}, JSON.stringify(time));
+            sendMessage('/topic/game/' + gameCode + "/time", time);
         });
+        /*
+        api.getTime(gameCode).then(function(time) {
+            stompClient.send('/topic/game/' + gameCode + "/time", {}, JSON.stringify(time));
+        });*/
     }
 
     var updateScoreBoard = function(players) {
@@ -143,14 +153,17 @@ var game = (function() {
 
         api.move(gameCode, playerName, newRow, newColumn);
 
+        api.getPlayer(gameCode, playerName).then(function(player) {
+            sendMessage('/topic/game/' + gameCode + '/players/' + playerName, { player, oldRow: playerRow, oldColumn: playerColumn });
+        });
+
+        /*
+        api.getPlayer(gameCode, playerName).then(function(player) {
+            stompClient.send('/topic/game/' + gameCode + '/players/' + playerName, {}, JSON.stringify({player: player, oldRow: playerRow, oldColumn : playerColumn}));
+        });*/
+
         positionPlayer(newRow, newColumn, playerColor);
         centerViewOnPlayer();
-
-        console.log("moving player: ", gameCode, this.playerName, newRow, newColumn);
-
-        api.getPlayer(gameCode, playerName).then(function(player) {
-            stompClient.send('/topic/game/' + gameCode + '/players/' + playerName, {}, JSON.stringify(player));
-        });
 
         sendScore();
     };
@@ -187,11 +200,32 @@ var game = (function() {
             function (p) {
                 if(p.name != playerName){
                     stompClient.subscribe('/topic/game/' + gameCode + '/players/' + p.name, function(data){
-                        player = JSON.parse(data.body);
+                        body = JSON.parse(data.body);
+                        console.log(body);
+                        player = body.player;
+                        oldRow = body.oldRow;
+                        oldColumn = body.oldColumn;
+
                         row = player.position[0];
                         column = player.position[1];
-                        color = player.color;
-                        positionPlayer(row, column, color);
+                        const rgb = player.color; // [255, 0, 0]
+                        const hexColor = rgbToHex(rgb[0], rgb[1], rgb[2]);
+
+                        const previousCell = grid[oldRow][oldColumn];
+                        const previousHexagon = previousCell.querySelector('.hexagon-other-player');
+                        if (previousHexagon) {
+                            previousCell.removeChild(previousHexagon);
+                        }
+                        previousCell.style.backgroundColor = hexColor;
+
+                        const currentCell = grid[row][column];
+                        const hexagon = document.createElement('div');
+                        hexagon.classList.add('.hexagon-other-player');
+
+                        hexagon.style.backgroundColor = hexColor;
+                        
+                        
+                        currentCell.appendChild(hexagon);   
                     });
                 }
             }
@@ -223,8 +257,23 @@ var game = (function() {
                 players = data;
                 stompClient.send('/topic/game/' + gameCode + "/players", {}, JSON.stringify(data));
             });
+
+            while (pendingMessages.length > 0) {
+                const { destination, message } = pendingMessages.shift();
+                stompClient.send(destination, {}, JSON.stringify(message));
+            }
         });
     }
+
+    // Enviar mensajes con buffer en caso de desconexión
+    function sendMessage(destination, message) {
+        if (stompClient && stompClient.connected) {
+            stompClient.send(destination, {}, JSON.stringify(message));
+        } else {
+            pendingMessages.push({ destination, message });
+        }
+    }
+
 
     function disconnect() {
         if (stompClient != null) {
