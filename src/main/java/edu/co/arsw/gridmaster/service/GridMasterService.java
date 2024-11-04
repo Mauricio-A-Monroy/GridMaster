@@ -172,6 +172,9 @@ public class GridMasterService {
             if(!newBox.isBusy()){
                 player.setPosition(newBox.getPosition());
 
+                player.addToTrace(newBox.getPosition());
+                //System.out.println("CANTIDAD DE CASILLAS " + player.getName() + ": " + player.getTrace().size());
+
                 player.incrementScore();
                 game.updateScoreOfPlayer(player.getName(), player.getScore().get());
 
@@ -181,8 +184,13 @@ public class GridMasterService {
 
                 newBox.setBusy(true);
                 // Decrementing opponent score
+
                 if(newBox.getOwner() != null){
                     Player opponent = newBox.getOwner();
+
+                    opponent.removeFromTrace(newBox.getPosition());
+                    //System.out.println("CANTIDAD DE CASILLAS " + opponent.getName() + ": " + player.getTrace().size());
+
                     opponent.decrementScore();
                     game.updateScoreOfPlayer(opponent.getName(), opponent.getScore().get());
                 }

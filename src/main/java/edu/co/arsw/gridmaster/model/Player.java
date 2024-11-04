@@ -4,8 +4,11 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import edu.co.arsw.gridmaster.persistance.Tuple;
 
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Random;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Player {
@@ -14,6 +17,7 @@ public class Player {
     private int[] color;
     private AtomicInteger score;
     private Tuple<Integer, Integer> position;
+    private Set<Tuple<Integer, Integer>> trace;
 
     @JsonCreator
     public Player(@JsonProperty("name") String name){
@@ -21,6 +25,7 @@ public class Player {
         this.score = new AtomicInteger(0);
         this.color = new int[]{0, 0, 0};
         this.position = new Tuple<>(0, 0);
+        this.trace = ConcurrentHashMap.newKeySet();
     }
 
     public String getName() {
@@ -70,6 +75,22 @@ public class Player {
 
     public boolean isLocatedAt(Integer x, Integer y){
         return (Objects.equals(this.position.getFirst(), x) && Objects.equals(this.position.getSecond(), y));
+    }
+
+    public Set<Tuple<Integer, Integer>> getTrace(){
+        return this.trace;
+    }
+
+    public void setTrace(Set<Tuple<Integer, Integer>> newTrace){
+        this.trace = newTrace;
+    }
+
+    public void addToTrace(Tuple<Integer, Integer> tuple){
+        trace.add(tuple);
+    }
+
+    public void removeFromTrace(Tuple<Integer, Integer> tuple){
+        trace.remove(tuple);
     }
 
     @Override
