@@ -1,10 +1,12 @@
 api=(function(){
-    
+
+    var linkAzure = "https://gridmaster-e3buhtargmajgvdj.eastus-01.azurewebsites.net/"
+
     //Gets
     var getPlayer = function(gameCode, playerName) {
         console.log("gameCode: ", gameCode, " playerName: ", playerName);
         return $.ajax({
-            url: 'http://localhost:8080/games/' + gameCode + '/players/' + playerName,
+            url: linkAzure + 'games/' + gameCode + '/players/' + playerName,
             type: 'GET',
             contentType: "application/json"
         }).then(function(response) {
@@ -17,7 +19,7 @@ api=(function(){
 
     var getScore = function(gameCode) {
         return $.ajax({
-            url: 'http://localhost:8080/games/' + gameCode + '/score',
+            url: linkAzure + 'games/' + gameCode + '/score',
             type: 'GET',
             contentType: "application/json"
         }).then(function(response) {
@@ -30,7 +32,7 @@ api=(function(){
 
     var getTime = function(gameCode) {
             return $.ajax({
-                url: 'http://localhost:8080/games/' + gameCode + '/time',
+                url: linkAzure + 'games/' + gameCode + '/time',
                 type: 'GET',
                 contentType: "application/json"
             }).then(function(response) {
@@ -43,7 +45,7 @@ api=(function(){
 
     var getPlayers = function(gameCode){
         return $.ajax({
-            url: 'http://localhost:8080/games/' + gameCode + '/players',
+            url: linkAzure + 'games/' + gameCode + '/players',
             type: 'GET',
             contentType: "application/json"
         }).then(function(response) {
@@ -57,7 +59,7 @@ api=(function(){
     //Post
     var createGame = function(playerName) {
         return $.ajax({
-            url: 'http://localhost:8080/games',
+            url: linkAzure + 'games',
             type: 'POST',
             contentType: "application/json"
         }).then(function(gameCode) {
@@ -71,7 +73,7 @@ api=(function(){
     //Puts
     var addPlayer = function(gameCode, playerName) {
         return $.ajax({
-            url: 'http://localhost:8080/games/' + gameCode + '/players',
+            url: linkAzure + 'games/' + gameCode + '/players',
             type: 'PUT',
             data: JSON.stringify({ name: playerName }),
             contentType: "application/json"
@@ -85,7 +87,7 @@ api=(function(){
 
     var startGame = function(gameCode) {
         return $.ajax({
-            url: 'http://localhost:8080/games/' + gameCode,
+            url: linkAzure + 'games/' + gameCode,
             type: 'PUT',
             contentType: "application/json"
         }).then(function(response) {
@@ -101,7 +103,7 @@ api=(function(){
         var json = JSON.stringify({ o1: o1, o2 : o2 })
         console.log(json);
         return $.ajax({
-            url: 'http://localhost:8080/games/' + gameCode + '/players/' + playerName,
+            url: linkAzure + 'games/' + gameCode + '/players/' + playerName,
             type: 'PUT',
             data: json,
             contentType: "application/json"
