@@ -168,7 +168,7 @@ public class GridMaster {
                         LinkedHashMap::new
                 ));
         int position = 1;
-        for(String key : this.scores.keySet()){
+        for(String key : orderedScores.keySet()){
             if(!key.equals("EMPTY")){
                 players.get(key).setScoreboardPosition(position);
                 position++;

@@ -2,6 +2,10 @@ var summary = (function(){
     var gameCode = -1;
     var playerName = "";
 
+    var setGameCode = function(code){
+        gameCode = code;
+    }
+
     var updateScoreBoard = function(gameCode) {
         api.getScore(gameCode).then(function(players) {
             const scoreTableBody = document.getElementById('scoreTableBody');
@@ -38,6 +42,7 @@ var summary = (function(){
     return {
         updateScoreBoard,
         updatePlayerSection,
+        setGameCode,
         returnHome
     };
 
@@ -49,6 +54,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     var playerName = params.get('playerName');
     var gameCode = params.get('gameCode');
+
+    summary.setGameCode(gameCode);
 
     if (gameCode) {
         summary.updateScoreBoard(gameCode);

@@ -144,7 +144,7 @@ public class GridMasterService {
         if(game.getMaxPlayers() == game.getPlayers().size()){
             throw new GameException("Room is full.");
         }
-        if(game.getPlayerByName(name) != null){
+        if(game.getPlayers().containsKey(name)){
             throw new PlayerSaveException();
         }
         Player player = new Player(name);
