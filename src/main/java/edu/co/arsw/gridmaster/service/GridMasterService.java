@@ -63,6 +63,12 @@ public class GridMasterService {
                         (e1, e2) -> e1,
                         LinkedHashMap::new
                 ));
+
+        int sum = scores.values().stream()
+                .mapToInt(a -> a)
+                .sum();
+
+        newScores.put("EMPTY", 10000 - sum);
         return newScores;
     }
 
@@ -115,6 +121,8 @@ public class GridMasterService {
     public void endGame(Integer code) throws GridMasterException{
         GridMaster game = gridMasterPersistence.getGameByCode(code);
         game.setGameState(GameState.FINISHED);
+        game.setPlayerPositionInScoreboard();
+        gridMasterPersistence.saveGame(game);
     }
 
     public void setPositions(GridMaster game) throws GridMasterException {

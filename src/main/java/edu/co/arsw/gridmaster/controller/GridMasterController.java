@@ -115,6 +115,16 @@ public class GridMasterController {
         return new ResponseEntity<>(HttpStatus.ACCEPTED);
     }
 
+    @RequestMapping(value = "{code}/finished", method = RequestMethod.PUT)
+    public ResponseEntity<?> endGame(@PathVariable Integer code){
+        try {
+            gridMasterService.endGame(code);
+        } catch (GridMasterException e) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+        return new ResponseEntity<>(HttpStatus.ACCEPTED);
+    }
+
     // DELETE Requests
 
     @RequestMapping(value = "{code}", method = RequestMethod.DELETE)

@@ -3,7 +3,11 @@ package edu.co.arsw.gridmaster.model;
 import edu.co.arsw.gridmaster.persistance.Tuple;
 
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 public class GridMaster {
 
@@ -19,7 +23,7 @@ public class GridMaster {
 
     public GridMaster() {
         this.code = (int) ((Math.random() * (9999 - 1000) + 1000));
-        this.time = 600;
+        this.time = 20;
         this.maxPlayers = 4;
         this.scores = new ConcurrentHashMap<>();
         this.players = new ConcurrentHashMap<>();
@@ -151,5 +155,24 @@ public class GridMaster {
     public void addPlayer(Player player){
         players.put(player.getName(), player);
         scores.put(player.getName(), player.getScore().get());
+    }
+
+    public void setPlayerPositionInScoreboard(){
+        Map<String, Integer> orderedScores = this.scores.entrySet()
+                .stream()
+                .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (e1, e2) -> e1,
+                        LinkedHashMap::new
+                ));
+        int position = 1;
+        for(String key : this.scores.keySet()){
+            if(!key.equals("EMPTY")){
+                players.get(key).setScoreboardPosition(position);
+                position++;
+            }
+        }
     }
 }

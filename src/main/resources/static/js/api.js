@@ -115,6 +115,31 @@ api=(function(){
         });
     }
 
+    var endGame = function(gameCode) {
+        return $.ajax({
+            url: linkAzure + 'games/' + gameCode + '/finished',
+            type: 'PUT',
+            contentType: "application/json"
+        }).then(function(response) {
+            console.log("Game ended");
+        }).catch(function(error) {
+            console.error("Error finishing game:", error);
+        });
+    }
+
+    //Deletes
+    var deleteGame = function(gameCode) {
+        return $.ajax({
+            url: linkAzure + 'games/' + gameCode,
+            type: 'DELETE',
+            contentType: "application/json"
+        }).then(function(response) {
+            console.log("Game deleted");
+        }).catch(function(error) {
+            console.error("Error deleting game:", error);
+        });
+    }
+
     return {
         createGame,
         addPlayer,
@@ -123,6 +148,8 @@ api=(function(){
         getPlayers,
         getTime,
         move,
-        startGame
+        startGame,
+        endGame,
+        deleteGame
     };
 })();
