@@ -75,6 +75,7 @@ var home = (function(){
         api.addPlayer(gameCode, playerName)
             .then(() => {
                 game.setPlayerConfig(gameCode, playerName);
+            }).then(() => {
                 window.location.href = `game.html?playerName=${encodeURIComponent(playerName)}&gameCode=${encodeURIComponent(gameCode)}`
             })
             .catch(error => {

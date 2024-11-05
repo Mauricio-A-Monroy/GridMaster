@@ -24,8 +24,30 @@ var game = (function() {
             playerRow = player.position[0];
             playerColumn = player.position[1];
             connectAndSubscribe();
-
+            drawAllTraces(gameCode);
             return playerColor;
+        });
+    };
+
+    var drawAllTraces = function(gameCode) {
+        console.log("Llegooooo a pintar",gameCode);
+        api.getPlayers(gameCode).then(function(players) {
+            players.forEach(
+                function (p) {
+                    console.log("PPPPPPPPPPPPPPPPPPPP: ",p);
+                    trace = p.trace;
+                    const rgb = p.color;
+                    const hexColor = rgbToHex(rgb[0], rgb[1], rgb[2]);
+                    trace.forEach(
+                        function (t) {
+                            console.log("TRACEEEEEEEEEEEEEEEEEEEEE: ",t);
+                            var row = t.first;
+                            var column = t.second;
+                            var cell = grid[row][column];
+                            cell.style.backgroundColor = hexColor;
+                    });
+                }
+            );
         });
     };
 
@@ -164,7 +186,7 @@ var game = (function() {
                 stompClient.send(
                     '/topic/game/' + gameCode + '/players/' + playerName,
                     {},
-                    JSON.stringify(player)
+                    JSON.stringify({currentPosition: player.position, lastPosition: player.lastPosition, color : player.color})
                 );
                 
                 row = player.position[0];
@@ -215,8 +237,8 @@ var game = (function() {
                     stompClient.subscribe('/topic/game/' + gameCode + '/players/' + p.name, function(data){
                         player = JSON.parse(data.body);
                         console.log("PLAYEEEEEEEEEEER: ", player);
-                        row = player.position[0];
-                        column = player.position[1];
+                        row = player.currentPosition[0];
+                        column = player.currentPosition[1];
 
                         oldRow = player.lastPosition[0];
                         oldColumn = player.lastPosition[1];
@@ -288,7 +310,8 @@ var game = (function() {
     return {
         loadBoard,
         setPlayerConfig,
-        setGameCode
+        setGameCode,
+        drawAllTraces
     };
 
 })();
