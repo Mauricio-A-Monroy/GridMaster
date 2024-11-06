@@ -14,14 +14,19 @@ var game = (function() {
     var stompClient = null;
     var players = [];
 
+    const colorToImageMap = {
+        "#FF0000": "/images/red.png",
+        "#0000FF": "/images/blue.png",
+        "#00FF00": "/images/green.png",
+        "#FFFF00": "/images/yellow.png"
+    };
+
     var setPlayerConfig = function(gameCode, name) {
         return api.getPlayer(gameCode, name).then(function(player) {
             const rgb = player.color; // [255, 0, 0]
             const hexColor = rgbToHex(rgb[0], rgb[1], rgb[2]);
             playerColor = hexColor;
-            console.log("Player color in hex:", playerColor);
             playerName = player.name;
-            console.log("NOMBRE DEL JUGADOR: ", playerName);
             playerRow = player.position[0];
             playerColumn = player.position[1];
             connectAndSubscribe();
@@ -31,17 +36,14 @@ var game = (function() {
     };
 
     var drawAllTraces = function(gameCode) {
-        console.log("Llegooooo a pintar",gameCode);
         api.getPlayers(gameCode).then(function(players) {
             players.forEach(
                 function (p) {
-                    console.log("PPPPPPPPPPPPPPPPPPPP: ",p);
                     trace = p.trace;
                     const rgb = p.color;
                     const hexColor = rgbToHex(rgb[0], rgb[1], rgb[2]);
                     trace.forEach(
                         function (t) {
-                            console.log("TRACEEEEEEEEEEEEEEEEEEEEE: ",t);
                             var row = t.first;
                             var column = t.second;
                             var cell = grid[row][column];
@@ -89,14 +91,14 @@ var game = (function() {
         const playerCell = grid[playerRow][playerColumn];
         const hexagon = document.createElement('div');
         hexagon.classList.add('hexagon');
+        hexagon.style.backgroundColor = playerColor;
         playerCell.appendChild(hexagon);
 
-        // Centrar la vista en el jugador después de cargar el tablero
         centerViewOnPlayer();
 
         timer = window.setInterval(sendTime, 1000);
-        console.log("Interval set");
-
+        window.setInterval(sendTime, 1000);
+      
         sendScore();
     };
 
@@ -227,6 +229,7 @@ var game = (function() {
         const currentCell = grid[playerRow][playerColumn];
         const hexagon = document.createElement('div');
         hexagon.classList.add('hexagon');
+        hexagon.style.backgroundColor = color;
         currentCell.appendChild(hexagon);
     };
 
@@ -245,7 +248,6 @@ var game = (function() {
                 if(p.name != playerName){
                     stompClient.subscribe('/topic/game/' + gameCode + '/players/' + p.name, function(data){
                         player = JSON.parse(data.body);
-                        console.log("PLAYEEEEEEEEEEER: ", player);
                         row = player.currentPosition[0];
                         column = player.currentPosition[1];
 
@@ -270,7 +272,6 @@ var game = (function() {
 
                         const hexagon = document.createElement('div');
                         hexagon.style.backgroundColor = hexColor;
-                        hexagon.style.border = "2px solid black";
                         hexagon.classList.add('hexagon-other-player');
                         currentCell.appendChild(hexagon);
            

@@ -37,23 +37,27 @@ body {
 .cell {
     width: 30px;
     height: 30px;
-    border: 1px solid #ccc;
+    border: 1px solid #474A45;
     box-sizing: border-box;
+    background-color: #5A5D58;
 }
 
 .hexagon {
-    width: 20px;
-    height: 20px;
-    background-color: var(--playarColor, #FFA500);
-    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
-    margin: auto;
-    position: relative;
-    top: 50%;
-    transform: translateY(-50%);
-    border: 2px solid black; /* Añade un borde negro */
+    width: 30px;
+    height: 30px;
+    background-image: url('/images/default2.png'); /* Ruta relativa a la imagen */
+    background-size: cover;
+    background-position: center;
+
 }
 
 .hexagon-other-player {
+    width: 30px;
+    height: 30px;
+    background-image: url('/images/default2.png'); /* Ruta relativa a la imagen */
+    background-size: cover;
+    background-position: center;
+    /*
     width: 20px;
     height: 20px;
     background-color: var(--playarColor, #FFA500);
@@ -63,7 +67,7 @@ body {
     top: 50%;
     transform: translateY(-50%);
     border: 2px solid black;
-    box-sizing: border-box;
+    box-sizing: border-box;*/
 }
 
 
