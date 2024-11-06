@@ -76,26 +76,46 @@ body {
     position: fixed;
     bottom: 20px;
     left: 20px;
-    background-color: rgba(255, 255, 255, 0.9);
+    background-color: #5A2A2A;
     border: 1px solid #ccc;
     border-radius: 8px;
     padding: 10px;
+    height: 1.2em; /* Fija la altura en función del tamaño del texto */
     font-family: 'Jacquard 12', monospace; /* Fuente para el código de juego */
-    font-size: 1.2em; /* Aumenta un poco el tamaño de la fuente */
+    font-size: 2em; /* Aumenta un poco el tamaño de la fuente */
+    color: #d1c7c1; 
     z-index: 1000; /* Asegura que esté encima de otros elementos */
+    justify-content: center; /* Centra el texto horizontalmente */
+}
+
+/* Elimina márgenes del párrafo */
+#gameCodeContainer p {
+    margin: 0;
+    line-height: 1; /* Asegura que el texto ocupe solo la altura necesaria */
 }
 
 /* Estilo del contenedor del tiempo de partida */
 #timerContainer {
     position: fixed;
     top: 20px;
-    background-color: rgba(255, 255, 255, 0.9);
+    background-color: #5A2A2A;
     border: 1px solid #ccc;
     border-radius: 8px;
-    padding: 10px;
+    padding: 0 8px;
+    height: 1.2em; /* Fija la altura en función del tamaño del texto */
     font-family: 'Jacquard 12', monospace; /* Fuente para el tiempo de juego */
-    font-size: 1.2em; /* Aumenta un poco el tamaño de la fuente */
+    font-size: 2em; /* Tamaño de la fuente */
+    color: #d1c7c1; 
     z-index: 1000; /* Asegura que esté encima de otros elementos */
+    display: flex;
+    align-items: center; /* Centra el texto verticalmente */
+    justify-content: center; /* Centra el texto horizontalmente */
+}
+
+/* Elimina márgenes del párrafo */
+#timerContainer p {
+    margin: 0;
+    line-height: 1; /* Asegura que el texto ocupe solo la altura necesaria */
 }
 
 /* Estilo de la tabla de puntajes */
@@ -103,16 +123,20 @@ body {
     position: fixed;
     top: 20px;       /* Ajusta el valor según la separación deseada del borde superior */
     right: 20px;     /* Ajusta el valor según la separación deseada del borde derecho */
-    background-color: rgba(255, 255, 255, 0.9);
+    background-color: #5A2A2A;
     border: 1px solid #ccc;
     border-radius: 8px;
     padding: 10px;
-    width: 200px;    /* Ajusta el ancho de la tabla */
+    width: 300px;    /* Ajusta el ancho de la tabla */
     max-height: 300px;
     overflow-y: auto; /* Habilita scroll en caso de que haya muchos jugadores */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     font-family: 'Jacquard 12', monospace; /* Fuente para la tabla */
+    font-size: 2em; /* Aumenta más el tamaño de la fuente para el código */
+    color: #d1c7c1; 
+    z-index: 1000;
 }
+
 
 /* Estilos para la tabla de puntajes */
 .score-board h2 {
@@ -133,11 +157,11 @@ body {
 
 .score-board th {
     font-weight: bold;
-    background-color: #f5f5f5;
+    background-color: #854343;
 }
 
 .score-board tbody tr:nth-child(even) {
-    background-color: #f9f9f9;
+    background-color: #854343;
 }
 
 /* Estilo para los botones */
