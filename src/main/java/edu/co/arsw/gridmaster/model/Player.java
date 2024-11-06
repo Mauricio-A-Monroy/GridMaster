@@ -23,7 +23,7 @@ public class Player {
     @JsonCreator
     public Player(@JsonProperty("name") String name){
         this.name = name;
-        this.score = new AtomicInteger(0);
+        this.score = new AtomicInteger(1);
         this.color = new int[]{0, 0, 0};
         this.trace = ConcurrentHashMap.newKeySet();
         this.currentPosition = new Tuple<>(0, 0);

@@ -26,10 +26,12 @@ var summary = (function(){
     var updatePlayerSection = function(gameCode, playerName) {
         const playerNameHTML = document.getElementById('playerName');
         const playerPositionHTML = document.getElementById('finalPosition');
+        const playerScoreHTML = document.getElementById('score');
 
         api.getPlayer(gameCode, playerName).then(function(player) {
             playerNameHTML.textContent = player.name;
             playerPositionHTML.textContent = player.scoreboardPosition;
+            playerScoreHTML.textContent = player.score;
         });
     };
 
