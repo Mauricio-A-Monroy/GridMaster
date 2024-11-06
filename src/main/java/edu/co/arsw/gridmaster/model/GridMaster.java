@@ -23,7 +23,7 @@ public class GridMaster {
 
     public GridMaster() {
         this.code = (int) ((Math.random() * (9999 - 1000) + 1000));
-        this.time = 20;
+        this.time = 300;
         this.maxPlayers = 4;
         this.scores = new ConcurrentHashMap<>();
         this.players = new ConcurrentHashMap<>();
