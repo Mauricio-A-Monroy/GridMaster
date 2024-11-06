@@ -79,15 +79,23 @@ var home = (function(){
                 window.location.href = `game.html?playerName=${encodeURIComponent(playerName)}&gameCode=${encodeURIComponent(gameCode)}`
             })
             .catch(error => {
-                if (error.status === 404) { 
-                    errorMessageDiv.textContent = "Game not found. Please check the code and try again.";
+                console.log("Error recibido:", error); // Imprime el error completo
+
+                const status = error.status || error.statusCode || (error.response && error.response.status);
+
+                if (status === 404) {
+                    errorMessageDiv.textContent = "Game not found. Pls check the code and try again.";
+                    errorMessageDiv.style.display = 'block';
+                } else if (status === 403) {
+                    errorMessageDiv.textContent = "Name is in use. Pls change it.";
+                    errorMessageDiv.style.display = 'block';
+                } else if (status === 409) {
+                    errorMessageDiv.textContent = "Game is full. Cannot join.";
                     errorMessageDiv.style.display = 'block';
                 } else {
                     console.error("Error al agregar jugador al juego:", error);
                 }
             });
-
-
     }
 
     return {

@@ -79,11 +79,8 @@ api=(function(){
             data: JSON.stringify({ name: playerName }),
             contentType: "application/json"
         }).then(function(response) {
-            console.log("Player added");
             return response;
-        }).catch(function(error) {
-            console.error("Error adding player:", error);
-        });
+        })
     };
 
     var startGame = function(gameCode) {

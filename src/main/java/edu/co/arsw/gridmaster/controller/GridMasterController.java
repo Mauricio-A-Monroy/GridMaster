@@ -1,7 +1,10 @@
 package edu.co.arsw.gridmaster.controller;
 
 import edu.co.arsw.gridmaster.model.Player;
+import edu.co.arsw.gridmaster.model.exceptions.GameException;
+import edu.co.arsw.gridmaster.model.exceptions.GameNotFoundException;
 import edu.co.arsw.gridmaster.model.exceptions.GridMasterException;
+import edu.co.arsw.gridmaster.model.exceptions.PlayerSaveException;
 import edu.co.arsw.gridmaster.persistance.Tuple;
 import edu.co.arsw.gridmaster.service.GridMasterService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -97,8 +100,14 @@ public class GridMasterController {
                                      @RequestBody Player player){
         try {
             gridMasterService.addPlayer(code, player.getName());
+        } catch (GameNotFoundException e) {
+            return new ResponseEntity<>("Game not found.", HttpStatus.NOT_FOUND);
+        } catch (GameException e) {
+            return new ResponseEntity<>("Room is full.", HttpStatus.CONFLICT);
+        } catch (PlayerSaveException e) {
+            return new ResponseEntity<>("Name is in use. Please choose another.", HttpStatus.FORBIDDEN);
         } catch (GridMasterException e) {
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity<>(HttpStatus.ACCEPTED);
     }
