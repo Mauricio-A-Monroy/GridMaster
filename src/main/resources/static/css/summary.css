@@ -1,3 +1,4 @@
+/* Estilo del cuerpo */
 body {
     display: flex;
     flex-direction: column;
@@ -5,59 +6,85 @@ body {
     justify-content: center;
     height: 100vh;
     margin: 0;
-    background-color: #f4f4f4;
-    font-family: Arial, sans-serif;
+    background-color: #5A2A2A;
+    font-family: 'Jacquard 12', sans-serif;
+    color: #ffffff;
+}
+
+/* Contenedor principal */
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    max-width: 500px;
+    background-color: rgba(90, 42, 42, 0.95);
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
 
 /* Estilo de la tabla de puntajes */
 .score-board {
-    position: fixed;
-    top: 20px;       /* Ajusta el valor según la separación deseada del borde superior */
-    right: 20px;     /* Ajusta el valor según la separación deseada del borde derecho */
-    background-color: rgba(255, 255, 255, 0.9);
-    border: 1px solid #ccc;
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0.1);
     border-radius: 8px;
     padding: 10px;
-    width: 200px;    /* Ajusta el ancho de la tabla */
     max-height: 300px;
-    overflow-y: auto; /* Habilita scroll en caso de que haya muchos jugadores */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    font-family: 'Jacquard 12', monospace; /* Fuente para la tabla */
+    overflow-y: auto;
+    color: #ffffff;
 }
 
-/* Estilos para la tabla de puntajes */
+/* Encabezado de la tabla */
 .score-board h2 {
-    margin: 0;
-    font-size: 1.2em;
+    font-size: 1.5em;
     text-align: center;
 }
 
+/* Tabla */
 .score-board table {
     width: 100%;
     border-collapse: collapse;
+    font-size: 1em;
 }
 
 .score-board th, .score-board td {
-    padding: 5px;
-    text-align: left;
+    padding: 10px;
+    text-align: center;
+    color: #ffffff;
 }
 
 .score-board th {
     font-weight: bold;
-    background-color: #f5f5f5;
+    background-color: #7b3b3b;
 }
 
 .score-board tbody tr:nth-child(even) {
-    background-color: #f9f9f9;
+    background-color: rgba(255, 255, 255, 0.1);
 }
 
-/* Estilo para los botones */
+/* Estilo de la posición final del jugador */
+.player-position {
+    font-size: 1.2em;
+    text-align: center;
+    color: #ffddc1;
+}
+
+/* Botón para regresar al inicio */
 button {
-    font-family: 'Jacquard 12', monospace; /* Fuente para los botones */
-    font-size: 20px;
+    font-family: 'Jacquard 12', sans-serif;
+    font-size: 1em;
     padding: 10px 20px;
-    margin: 10px 0;
+    background-color: #7b3b3b;
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
     cursor: pointer;
     width: 200px;
+    transition: background-color 0.3s;
 }
 
+button:hover {
+    background-color: #9b4b4b;
+}
