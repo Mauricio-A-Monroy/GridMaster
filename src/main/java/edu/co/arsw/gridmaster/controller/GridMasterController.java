@@ -89,10 +89,10 @@ public class GridMasterController {
     public ResponseEntity<?> startGame(@PathVariable Integer code){
         try {
             gridMasterService.startGame(code);
+            return new ResponseEntity<>(HttpStatus.ACCEPTED);
         } catch (GridMasterException e) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
-        return new ResponseEntity<>(HttpStatus.ACCEPTED);
     }
 
     @RequestMapping(value = "{code}/players", method = RequestMethod.PUT)
@@ -100,6 +100,7 @@ public class GridMasterController {
                                      @RequestBody Player player){
         try {
             gridMasterService.addPlayer(code, player.getName());
+            return new ResponseEntity<>(HttpStatus.ACCEPTED);
         } catch (GameNotFoundException e) {
             return new ResponseEntity<>("Game not found.", HttpStatus.NOT_FOUND);
         } catch (GameException e) {
@@ -109,7 +110,6 @@ public class GridMasterController {
         } catch (GridMasterException e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return new ResponseEntity<>(HttpStatus.ACCEPTED);
     }
 
     @RequestMapping(value = "{code}/players/{name}", method = RequestMethod.PUT)
@@ -118,10 +118,20 @@ public class GridMasterController {
                                         @RequestBody Tuple<Integer, Integer> newPosition){
         try {
             gridMasterService.move(code, name, newPosition);
+            return new ResponseEntity<>(HttpStatus.ACCEPTED);
         } catch (GridMasterException e) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
-        return new ResponseEntity<>(HttpStatus.ACCEPTED);
+    }
+
+    @RequestMapping(value = "{code}/finished", method = RequestMethod.PUT)
+    public ResponseEntity<?> endGame(@PathVariable Integer code){
+        try {
+            gridMasterService.endGame(code);
+            return new ResponseEntity<>(HttpStatus.ACCEPTED);
+        } catch (GridMasterException e) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
     }
 
     // DELETE Requests
@@ -130,10 +140,10 @@ public class GridMasterController {
     public ResponseEntity<?> deleteGame(@PathVariable Integer code){
         try {
             gridMasterService.deleteGridMaster(code);
+            return new ResponseEntity<>(HttpStatus.ACCEPTED);
         } catch (GridMasterException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>(HttpStatus.ACCEPTED);
     }
 
 }

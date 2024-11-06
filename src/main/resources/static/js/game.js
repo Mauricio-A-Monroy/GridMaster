@@ -8,6 +8,7 @@ var game = (function() {
     var playerColor = "#FFA500";
     var gameCode = -1;
     const boardContainer = document.querySelector('.board-container');
+    var timer = null;
 
     const grid = Array.from({ length: rows }, () => Array(columns).fill(null));
     var stompClient = null;
@@ -94,10 +95,11 @@ var game = (function() {
         playerCell.appendChild(hexagon);
 
         centerViewOnPlayer();
-        window.setInterval(sendTime, 1000);
-        console.log("Interval set");
 
-        sendScore();;
+        timer = window.setInterval(sendTime, 1000);
+        window.setInterval(sendTime, 1000);
+      
+        sendScore();
     };
 
     var sendScore = function(){
@@ -109,6 +111,14 @@ var game = (function() {
 
     var sendTime = function(){
         api.getTime(gameCode).then(function(time) {
+            if(time == "00:00"){
+                window.clearInterval(timer);
+                console.log("Timer clear");
+                disconnect();
+                api.endGame(gameCode).then(() => {
+                   window.location.href = `summary.html?playerName=${encodeURIComponent(playerName)}&gameCode=${encodeURIComponent(gameCode)}`
+                });
+            }
             stompClient.send('/topic/game/' + gameCode + "/time", {}, JSON.stringify(time));
         });
     }
@@ -303,9 +313,10 @@ var game = (function() {
         if (stompClient != null) {
             stompClient.disconnect();
         }
-        setConnected(false);
         console.log("Disconnected");
     }
+
+
 
     return {
         loadBoard,

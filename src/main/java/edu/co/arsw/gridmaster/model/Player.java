@@ -18,6 +18,7 @@ public class Player {
     private Tuple<Integer, Integer> currentPosition;
     private Tuple<Integer, Integer> lastPosition;
     private Set<Tuple<Integer, Integer>> trace;
+    private Integer scoreboardPosition;
 
     @JsonCreator
     public Player(@JsonProperty("name") String name){
@@ -27,6 +28,7 @@ public class Player {
         this.trace = ConcurrentHashMap.newKeySet();
         this.currentPosition = new Tuple<>(0, 0);
         this.lastPosition = new Tuple<>(0, 0);
+        this.scoreboardPosition = 0;
     }
 
     public String getName() {
@@ -75,6 +77,14 @@ public class Player {
 
     public void setPosition(Tuple<Integer, Integer> position) {
         this.currentPosition = position;
+    }
+
+    public Integer getScoreboardPosition() {
+        return scoreboardPosition;
+    }
+
+    public void setScoreboardPosition(Integer scoreboardPosition) {
+        this.scoreboardPosition = scoreboardPosition;
     }
 
     public void generatePosition(Integer x, Integer y) {
