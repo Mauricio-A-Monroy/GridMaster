@@ -134,6 +134,7 @@ public class GridMasterService {
                 position = i.getPosition();
             } while (positions.contains(position));
             positions.add(position);
+            i.addToTrace(new Tuple<>(position[0], position[1]));
             game.getBox(new Tuple<>(position[0], position[1])).setBusy(true);
         }
         gridMasterPersistence.saveGame(game);
@@ -151,11 +152,12 @@ public class GridMasterService {
         player.setColor(game.obtainColor());
         game.addPlayer(player);
         if(game.getGameState().equals(GameState.STARTED)){
+            int[] position;
             while(true){
                 Integer x = game.getDimension().getFirst();
                 Integer y = game.getDimension().getSecond();
                 player.generatePosition(x, y);
-                int[] position = player.getPosition();
+                position = player.getPosition();
                 Box box = game.getBox(new Tuple<>(position[0], position[1]));
                 synchronized (box){
                     if(!box.isBusy()){
@@ -164,6 +166,7 @@ public class GridMasterService {
                     }
                 }
             }
+            player.addToTrace(new Tuple<>(position[0], position[1]));
         }
         gridMasterPersistence.saveGame(game);
     }
@@ -190,11 +193,13 @@ public class GridMasterService {
             if(!newBox.isBusy()){
                 player.setPosition(newBox.getPosition());
 
-                player.addToTrace(newBox.getPosition());
-                //System.out.println("CANTIDAD DE CASILLAS " + player.getName() + ": " + player.getTrace().size());
+                if(!player.getTrace().contains(newBox.getPosition())){
+                    player.addToTrace(newBox.getPosition());
+                    //System.out.println("CANTIDAD DE CASILLAS " + player.getName() + ": " + player.getTrace().size());
 
-                player.incrementScore();
-                game.updateScoreOfPlayer(player.getName(), player.getScore().get());
+                    player.incrementScore();
+                    game.updateScoreOfPlayer(player.getName(), player.getScore().get());
+                }
 
                 oldBox.setBusy(false);
                 oldBox.setOwner(player);
@@ -203,7 +208,7 @@ public class GridMasterService {
                 newBox.setBusy(true);
                 // Decrementing opponent score
 
-                if(newBox.getOwner() != null){
+                if(newBox.getOwner() != null && !newBox.getOwner().getName().equals(player.getName())){
                     Player opponent = newBox.getOwner();
 
                     opponent.removeFromTrace(newBox.getPosition());
