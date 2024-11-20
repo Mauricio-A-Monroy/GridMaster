@@ -1,7 +1,7 @@
 api=(function(){
 
-    var linkAzure = "https://gridmaster-e3buhtargmajgvdj.eastus-01.azurewebsites.net/"
-    //var linkAzure = "http://localhost:8080/"
+    // var linkAzure = "https://gridmasterbackend-cdezamajdeadcchu.eastus-01.azurewebsites.net/"
+    var linkAzure = "http://localhost:8080/"
 
     //Gets
     var getPlayer = function(gameCode, playerName) {
@@ -18,32 +18,6 @@ api=(function(){
         });
     };
 
-    var getScore = function(gameCode) {
-        return $.ajax({
-            url: linkAzure + 'games/' + gameCode + '/score',
-            type: 'GET',
-            contentType: "application/json"
-        }).then(function(response) {
-            console.log("Scores: ", response);
-            return response;
-        }).catch(function(error) {
-            console.error("Error getting player:", error);
-        });
-    };
-
-    var getTime = function(gameCode) {
-            return $.ajax({
-                url: linkAzure + 'games/' + gameCode + '/time',
-                type: 'GET',
-                contentType: "application/json"
-            }).then(function(response) {
-                console.log("Time: ", response);
-                return response;
-            }).catch(function(error) {
-                console.error("Error getting player:", error);
-            });
-        };
-
     var getPlayers = function(gameCode){
         return $.ajax({
             url: linkAzure + 'games/' + gameCode + '/players',
@@ -56,6 +30,19 @@ api=(function(){
             console.error("Error getting player:", error);
         });
     }
+
+    var getScore = function(gameCode) {
+        return $.ajax({
+            url: linkAzure + 'games/' + gameCode + '/score',
+            type: 'GET',
+            contentType: "application/json"
+        }).then(function(response) {
+            console.log("Scores: ", response);
+            return response;
+        }).catch(function(error) {
+            console.error("Error getting player:", error);
+        });
+    };
     
     //Post
     var createGame = function(playerName) {
@@ -143,7 +130,6 @@ api=(function(){
         getPlayer,
         getScore,
         getPlayers,
-        getTime,
         move,
         startGame,
         endGame,

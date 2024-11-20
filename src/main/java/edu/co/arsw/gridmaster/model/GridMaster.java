@@ -23,7 +23,7 @@ public class GridMaster {
 
     public GridMaster() {
         this.code = (int) ((Math.random() * (9999 - 1000) + 1000));
-        this.time = 300;
+        this.time = 30;
         this.maxPlayers = 4;
         this.scores = new ConcurrentHashMap<>();
         this.players = new ConcurrentHashMap<>();
@@ -133,25 +133,6 @@ public class GridMaster {
                 '}';
     }
 
-    public void printBoard(){
-        boolean bool = false;
-        for(int i = 0; i < dimension.getFirst(); i++){
-            for(int j = 0; j < dimension.getSecond(); j++){
-                for(Player player : players.values()){
-                    if(player.isLocatedAt(i, j)){
-                        System.out.print(player.getName() + "           ");
-                        bool = true;
-                    }
-                }
-                if(!bool){
-                    System.out.print(boxes.get(i).get(j).getOwner() + "             ");
-                }
-                bool = false;
-            }
-            System.out.println();
-        }
-    }
-
     public void addPlayer(Player player){
         players.put(player.getName(), player);
         scores.put(player.getName(), player.getScore().get());
@@ -174,5 +155,41 @@ public class GridMaster {
                 position++;
             }
         }
+    }
+
+    public Map<String, Integer> topTen(){
+        ConcurrentHashMap<String, Integer> scores = this.getScores();
+        ConcurrentHashMap<String, Integer> topTen = new ConcurrentHashMap<>();
+        int cont = 0;
+        for(String key : scores.keySet()){
+            if(cont == 10){
+                break;
+            }
+            topTen.put(key, scores.get(key));
+            cont++;
+        }
+        Map<String, Integer> newScores = topTen.entrySet()
+                .stream()
+                .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (e1, e2) -> e1,
+                        LinkedHashMap::new
+                ));
+
+        int sum = scores.values().stream()
+                .mapToInt(a -> a)
+                .sum();
+
+        newScores.put("EMPTY", 10000 - sum);
+        return newScores;
+    }
+
+    public String getFormatTime(){
+        int time = this.getTime();
+        int minutes = time / 60;
+        int seconds = time % 60;
+        return String.format("%02d:%02d", minutes, seconds);
     }
 }

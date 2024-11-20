@@ -63,15 +63,6 @@ public class GridMasterController {
         }
     }
 
-    @RequestMapping(value = "{code}/time", method = RequestMethod.GET)
-    public ResponseEntity<?> getTimeByCode(@PathVariable Integer code){
-        try {
-            return new ResponseEntity<>(gridMasterService.getTime(code), HttpStatus.ACCEPTED);
-        } catch (GridMasterException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-    }
-
     // POST Requests
 
     @RequestMapping(method = RequestMethod.POST)
