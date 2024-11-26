@@ -14,11 +14,14 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 public class GridMasterService {
 
-    @Autowired
     GridMasterPersistence gridMasterPersistence;
+    SimpMessagingTemplate msgt;
 
     @Autowired
-    SimpMessagingTemplate msgt;
+    public GridMasterService(GridMasterPersistence gridMasterPersistence, SimpMessagingTemplate msgt){
+        this.gridMasterPersistence = gridMasterPersistence;
+        this.msgt = msgt;
+    }
 
     public Set<GridMaster> getAllGames(){
         return gridMasterPersistence.getAllGames();
@@ -47,8 +50,13 @@ public class GridMasterService {
         return game.topTen();
     }
 
-    public Integer createGridMaster() throws GridMasterException {
-        GridMaster newGame = new GridMaster();
+    public String getTime(Integer code) throws GridMasterException {
+        GridMaster game = gridMasterPersistence.getGameByCode(code);
+        return game.getFormatTime();
+    }
+
+    public Integer createGridMaster(HashMap<String, Integer> settings) throws GridMasterException {
+        GridMaster newGame = new GridMaster(settings);
         gridMasterPersistence.saveGame(newGame);
         return newGame.getCode();
     }
@@ -85,13 +93,7 @@ public class GridMasterService {
                 }
             }
         };
-
         timer.scheduleAtFixedRate(task, 0, 1000);
-    }
-
-    public String getTime(Integer code) throws GridMasterException {
-        GridMaster game = gridMasterPersistence.getGameByCode(code);
-        return game.getFormatTime();
     }
 
     public void endGame(Integer code) throws GridMasterException{
@@ -122,7 +124,7 @@ public class GridMasterService {
         if(game.getPlayers().containsKey(name)){
             throw new PlayerSaveException();
         }
-        Player player = new Player(name);
+        Player player = (game.getPlayers().isEmpty()) ? new Player(name, PlayerRole.ADMIN) : new Player(name, PlayerRole.PLAYER);;
         player.setColor(game.obtainColor());
         game.addPlayer(player);
         if(game.getGameState().equals(GameState.STARTED)){
@@ -187,8 +189,21 @@ public class GridMasterService {
         }
     }
 
+    public void updateGame(Integer code, HashMap<String, Integer> settings) throws GridMasterException{
+        GridMaster game = gridMasterPersistence.getGameByCode(code);
+        game.updateSettings(settings);
+    }
+
     public void deleteGridMaster(Integer code) throws GridMasterException{
         gridMasterPersistence.deleteGame(code);
+    }
+
+    public void deletePlayer(Integer code, String name) throws GridMasterException{
+        GridMaster game = gridMasterPersistence.getGameByCode(code);
+        if(!game.getPlayers().containsKey(name)){
+            throw new PlayerNotFoundException();
+        }
+        game.removePlayer(name);
     }
 
 }

@@ -1,7 +1,7 @@
 api=(function(){
 
-    var linkAzure = "https://gridmaster-e3buhtargmajgvdj.eastus-01.azurewebsites.net/"
-    // var linkAzure = "http://localhost:8080/"
+    // var linkAzure = "https://gridmaster-e3buhtargmajgvdj.eastus-01.azurewebsites.net/"
+    var linkAzure = "http://localhost:8080/"
 
     //Gets
     var getPlayer = function(gameCode, playerName) {
@@ -70,9 +70,24 @@ api=(function(){
         })
     };
 
+    /**
+    var updateGame = function(gameCode) {
+        return $.ajax({
+            url: linkAzure + 'games/' + gameCode + '/started',
+            type: 'PUT',
+            contentType: "application/json"
+        }).then(function(response) {
+            console.log("Game started");
+            return response;
+        }).catch(function(error) {
+            console.error("Error adding player:", error);
+        });
+    };
+    **/
+
     var startGame = function(gameCode) {
         return $.ajax({
-            url: linkAzure + 'games/' + gameCode,
+            url: linkAzure + 'games/' + gameCode + '/started',
             type: 'PUT',
             contentType: "application/json"
         }).then(function(response) {
@@ -124,6 +139,18 @@ api=(function(){
         });
     }
 
+    var deletePlayer = function(gameCode, name) {
+            return $.ajax({
+                url: linkAzure + 'games/' + gameCode + "players/" + name,
+                type: 'DELETE',
+                contentType: "application/json"
+            }).then(function(response) {
+                console.log("Player deleted");
+            }).catch(function(error) {
+                console.error("Error deleting player:", error);
+            });
+        }
+
     return {
         createGame,
         addPlayer,
@@ -133,6 +160,7 @@ api=(function(){
         move,
         startGame,
         endGame,
-        deleteGame
+        deleteGame,
+        deletePlayer
     };
 })();

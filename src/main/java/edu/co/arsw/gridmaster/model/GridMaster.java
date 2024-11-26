@@ -2,10 +2,7 @@ package edu.co.arsw.gridmaster.model;
 
 import edu.co.arsw.gridmaster.persistance.Tuple;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -23,14 +20,18 @@ public class GridMaster {
 
     public GridMaster() {
         this.code = (int) ((Math.random() * (9999 - 1000) + 1000));
-        this.time = 30;
-        this.maxPlayers = 4;
         this.scores = new ConcurrentHashMap<>();
         this.players = new ConcurrentHashMap<>();
-        this.dimension = new Tuple<>(100, 100);
         this.color = new Color();
-        this.boxes = new ArrayList<>();
         this.gameState = GameState.WAITING_FOR_PLAYERS;
+    }
+
+    public GridMaster(HashMap<String, Integer> settings) {
+        this();
+        this.time = (settings.get("minutes") * 60) + settings.get("seconds");
+        this.dimension = new Tuple<>(settings.get("xDimension"), settings.get("yDimension"));
+        this.maxPlayers = settings.get("maxPlayers");
+        this.boxes = new ArrayList<>();
         for(int i = 0; i < dimension.getFirst(); i++){
             boxes.add(new ArrayList<>());
             for(int j = 0; j < dimension.getSecond(); j++){
@@ -138,6 +139,11 @@ public class GridMaster {
         scores.put(player.getName(), player.getScore().get());
     }
 
+    public void removePlayer(String name){
+        players.remove(name);
+        scores.remove(name);
+    }
+
     public void setPlayerPositionInScoreboard(){
         Map<String, Integer> orderedScores = this.scores.entrySet()
                 .stream()
@@ -191,5 +197,11 @@ public class GridMaster {
         int minutes = time / 60;
         int seconds = time % 60;
         return String.format("%02d:%02d", minutes, seconds);
+    }
+
+    public void updateSettings(HashMap<String, Integer> settings){
+        this.time = (settings.get("minutes") * 60) + settings.get("seconds");
+        this.dimension = new Tuple<>(settings.get("xDimension"), settings.get("yDimension"));
+        this.maxPlayers = settings.get("maxPlayers");
     }
 }
