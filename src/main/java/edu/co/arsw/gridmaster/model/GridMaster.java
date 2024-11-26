@@ -24,20 +24,10 @@ public class GridMaster {
         this.players = new ConcurrentHashMap<>();
         this.color = new Color();
         this.gameState = GameState.WAITING_FOR_PLAYERS;
-    }
-
-    public GridMaster(HashMap<String, Integer> settings) {
-        this();
-        this.time = (settings.get("minutes") * 60) + settings.get("seconds");
-        this.dimension = new Tuple<>(settings.get("xDimension"), settings.get("yDimension"));
-        this.maxPlayers = settings.get("maxPlayers");
+        this.time = 300;
+        this.dimension = new Tuple<>(100, 100);
+        this.maxPlayers = 4;
         this.boxes = new ArrayList<>();
-        for(int i = 0; i < dimension.getFirst(); i++){
-            boxes.add(new ArrayList<>());
-            for(int j = 0; j < dimension.getSecond(); j++){
-                boxes.get(i).add(new Box( new Tuple<>(i, j) ));
-            }
-        }
     }
 
     public Integer getCode() {
@@ -203,5 +193,12 @@ public class GridMaster {
         this.time = (settings.get("minutes") * 60) + settings.get("seconds");
         this.dimension = new Tuple<>(settings.get("xDimension"), settings.get("yDimension"));
         this.maxPlayers = settings.get("maxPlayers");
+        this.boxes = new ArrayList<>();
+        for(int i = 0; i < dimension.getFirst(); i++){
+            boxes.add(new ArrayList<>());
+            for(int j = 0; j < dimension.getSecond(); j++){
+                boxes.get(i).add(new Box( new Tuple<>(i, j) ));
+            }
+        }
     }
 }

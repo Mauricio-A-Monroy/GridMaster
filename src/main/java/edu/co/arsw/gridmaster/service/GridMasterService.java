@@ -9,7 +9,6 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class GridMasterService {
@@ -55,8 +54,8 @@ public class GridMasterService {
         return game.getFormatTime();
     }
 
-    public Integer createGridMaster(HashMap<String, Integer> settings) throws GridMasterException {
-        GridMaster newGame = new GridMaster(settings);
+    public Integer createGridMaster() throws GridMasterException {
+        GridMaster newGame = new GridMaster();
         gridMasterPersistence.saveGame(newGame);
         return newGame.getCode();
     }
